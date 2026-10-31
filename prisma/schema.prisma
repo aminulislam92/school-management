@@ -539,6 +539,7 @@ model Group {
   schoolId Int
   nameBn   String // বিজ্ঞান
   nameEn   String // Science
+  isActive Boolean @default(true) // a group the school doesn't offer is switched off, never deleted
 
   school        School         @relation(fields: [schoolId], references: [id])
   sections      Section[]

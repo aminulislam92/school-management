@@ -558,6 +558,69 @@
   },
   "academicTabs": {
     "label": "Academic setup",
-    "sessions": "Sessions"
+    "sessions": "Sessions",
+    "classes": "Classes",
+    "groups": "Groups"
+  },
+  "classes": {
+    "title": "Classes",
+    "hint": "Classes follow the national order (Play to Twelve). You can rename them, switch them on/off and choose whether Classes 9–12 have groups.",
+    "order": "Order",
+    "name": "Name",
+    "level": "Level",
+    "groups": "Groups",
+    "sections": "Sections",
+    "students": "Students (current)",
+    "withGroups": "With groups",
+    "noGroups": "No groups",
+    "off": "Off",
+    "edit": "Edit",
+    "turnOff": "Switch off",
+    "turnOn": "Switch on",
+    "save": "Save",
+    "editTitle": "Edit class",
+    "editHint": "{level}, order {order, number}. The order can't change: promotion moves students to the next one.",
+    "orderNote": "Promotion uses the order to find the next class, so it can't change. Switch off classes the school doesn't teach; a class with students this session can't be switched off.",
+    "addLevelTitle": "Add a level",
+    "addLevelHint": "When the school starts a new level (e.g. a college section), all its classes are added at once.",
+    "addLevel": "Add {level}"
+  },
+  "groups": {
+    "title": "Groups",
+    "hint": "Science, Humanities, Business Studies, etc. Only for Classes 9–12.",
+    "usedIn": "Classes with groups: {classes}",
+    "noGroupClasses": "No class has groups switched on. Turn them on for Classes 9–12 on the Classes page.",
+    "empty": "No groups.",
+    "name": "Name",
+    "sections": "Sections",
+    "students": "Students (current)",
+    "off": "Off",
+    "edit": "Edit",
+    "turnOff": "Switch off",
+    "turnOn": "Switch on",
+    "new": "New group",
+    "newHint": "For example Agriculture or Home Science.",
+    "create": "Add group",
+    "save": "Save",
+    "editTitle": "Edit group"
+  },
+  "academicForm": {
+    "nameBn": "Name (Bangla)",
+    "nameEn": "Name (English)",
+    "hasGroups": "This class has groups",
+    "hasGroupsHint": "Sections and subjects are split by Science/Humanities/Business.",
+    "saving": "Saving...",
+    "saved": "Saved.",
+    "cancel": "Cancel"
+  },
+  "academicErrors": {
+    "name": "Name must be 1 to 40 characters.",
+    "nameTaken": "Another one already has this name.",
+    "notFound": "Not found.",
+    "groupsOnlyNineUp": "Only Classes 9–12 can have groups.",
+    "groupedSections": "This class has sections split by group, so groups can't be switched off.",
+    "classHasStudents": "This class has students this session, so it can't be switched off.",
+    "groupInUse": "This group has sections or students, so it can't be switched off.",
+    "levelExists": "This level already exists."
   }
 }
