@@ -147,5 +147,55 @@
       "students": "Students",
       "studentsNote": "Active students in all schools"
     }
+  },
+  "plans": {
+    "title": "Plans",
+    "new": "New plan",
+    "newTitle": "New plan",
+    "editTitle": "Edit plan",
+    "empty": "No plans yet. Start with \"New plan\".",
+    "save": "Save",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "activate": "Turn on",
+    "deactivate": "Turn off",
+    "active": "On",
+    "inactive": "Off",
+    "status": "Status",
+    "schoolsUsing": "Subscriptions",
+    "fields": {
+      "name": "Plan name",
+      "price": "Price",
+      "billingCycle": "Billing every",
+      "maxStudents": "Max students",
+      "features": "Modules included",
+      "isActive": "Offer this plan to new schools"
+    },
+    "cycles": {
+      "MONTHLY": "Monthly",
+      "YEARLY": "Yearly"
+    },
+    "per": {
+      "MONTHLY": "month",
+      "YEARLY": "year"
+    },
+    "errors": {
+      "name": "Use 2 to 60 characters.",
+      "nameTaken": "Another plan already has this name.",
+      "price": "Enter a valid price, e.g. 1500 or 1500.50.",
+      "billingCycle": "Choose monthly or yearly.",
+      "maxStudents": "Enter a whole number from 1 to 100,000.",
+      "notFound": "Plan not found."
+    },
+    "features": {
+      "attendance": "Attendance",
+      "fees": "Fees and accounts",
+      "exams": "Exams and results",
+      "sms": "SMS",
+      "portal": "Student and guardian portal",
+      "routine": "Class routine",
+      "certificates": "Certificates and ID cards"
+    }
   }
 }

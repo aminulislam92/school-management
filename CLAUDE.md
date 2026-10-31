@@ -46,5 +46,7 @@ The developer is learning Next.js: after each change, explain briefly in Bangla 
 - Password changes bump `User.sessionVersion` (logs out other devices). Anything else that must force a logout (role change, deactivation) should bump it too.
 - Bangla text must work everywhere: forms, PDFs (Bangla font), Excel, SMS.
 - Business rules (GPA, fees, late fee, promotion) live in `src/server/services/` as pure functions with unit tests.
+- Client components (`"use client"`) must never import a file that imports `@/lib/db` (Next.js refuses: `server-only`). Put constants and zod schemas a form needs in a separate db-free file (pattern: `src/server/super/plan-schema.ts` + `plans.ts`).
+- Forms: `useActionState` + server action. On a failed save return the submitted `values` and use them as `defaultValue`, because React resets the form after an action.
 - Small changes: one task from `docs/04-tasks.md` per branch and commit.
 - Never commit `.env`. Add new env vars to `.env.example`.
