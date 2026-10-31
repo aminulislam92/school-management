@@ -15,7 +15,7 @@ The developer is learning Next.js: after each change, explain briefly in Bangla 
 
 ## Commands
 - Dev: `npm run dev` (school apps on `http://demo.localhost:3000`)
-- Lint / types / tests: `npm run lint`, `npm run typecheck`, `npm test`
+- Lint / types / tests: `npm run lint`, `npm run typecheck`, `npm test` (no DB), `npm run test:db` (uses local MySQL)
 - DB: `npm run db:migrate -- --name <name>`, `npm run db:seed`, `npm run db:studio`
 - Build: `npm run build`
 
@@ -26,7 +26,11 @@ The developer is learning Next.js: after each change, explain briefly in Bangla 
 - Schema (source of truth): `prisma/schema.prisma`; default master data: `prisma/defaults.ts`
 
 ## Rules
-- Multi-tenant: every school-owned query filters by `schoolId`; check role/permission on the server in every action, not only in the UI.
+- Multi-tenant: inside a school, always query through `const { school, sdb } = await getSchoolDb()` (`src/lib/tenant.ts`), never the plain `db`. `sdb` adds the school filter to every query and refuses cross-school writes (`src/server/db/school-db.ts`). Plain `db` is only for super-admin pages, seed and system jobs.
+- New Prisma model: give it `schoolId`, or add it to `CHILD_MODELS`/`GLOBAL_MODELS` in `src/server/db/tenant-scope.ts` — `npm test` fails until you do.
+- `sdb` does not check ids inside nested writes (`connect`, nested `create`): when an action receives foreign ids (sectionId, subjectId ...), load them through `sdb` first. No raw SQL with school data.
+- Run `npm run test:db` (needs local MySQL) after touching `school-db.ts` or `tenant-scope.ts`.
+- Check role/permission on the server in every action, not only in the UI.
 - Never trust `schoolId` from the client; take it from the session and the subdomain.
 - Money is `Decimal` (`@db.Decimal(10,2)`), never Float. Use string/Decimal math, not JS floats.
 - Per-year student data (class, section, roll, group, 4th subject) lives in `Enrollment`, not `Student`.

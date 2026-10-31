@@ -5,8 +5,9 @@
   },
   "home": {
     "title": "Welcome",
-    "setupDone": "Project setup complete. Next step: login and multi-school (Phase 1).",
-    "today": "Today"
+    "today": "Today",
+    "mainSite": "Main site: super admin and product info",
+    "schoolSite": "School site"
   },
   "common": {
     "save": "Save",
@@ -15,5 +16,10 @@
     "delete": "Delete",
     "search": "Search",
     "loading": "Loading..."
+  },
+  "notFound": {
+    "title": "Not found",
+    "description": "There is no school or page at this address. Please check the address.",
+    "back": "Go to home page"
   }
 }
