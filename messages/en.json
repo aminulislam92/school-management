@@ -561,7 +561,8 @@
     "sessions": "Sessions",
     "classes": "Classes",
     "groups": "Groups",
-    "sections": "Sections"
+    "sections": "Sections",
+    "subjects": "Subjects"
   },
   "classes": {
     "title": "Classes",
@@ -625,7 +626,10 @@
     "levelExists": "This level already exists.",
     "sectionHasStudents": "This section has students this session, so it can't be switched off.",
     "sectionUsed": "This section has been used, so it can't be deleted. Switch it off instead.",
-    "class": "Its class is switched off; switch the class on first."
+    "class": "Its class is switched off; switch the class on first.",
+    "paperFollowsParent": "A paper can't be switched off or deleted alone; change the parent subject.",
+    "subjectInClasses": "A class still has this subject. Remove it from the class first.",
+    "subjectUsed": "This subject has been used, so it can't be deleted. Switch it off instead."
   },
   "sectionsPage": {
     "title": "Sections",
@@ -680,6 +684,60 @@
       "groupHasStudents": "This section has students this session, so its group can't change.",
       "capacityBelow": "It already has {count, number} students; seats can't be fewer.",
       "notFound": "Section not found."
+    }
+  },
+  "subjectsPage": {
+    "title": "Subjects",
+    "hint": "All subjects with their board codes. A two-paper subject (e.g. Bangla 1st and 2nd paper) is created in one go; in results both papers' marks are added into one subject. Which class has which subject comes in the next step.",
+    "empty": "No subjects yet. Add them with the form on the right.",
+    "code": "Code",
+    "name": "Name",
+    "classes": "In classes",
+    "twoPapers": "Two papers",
+    "off": "Off",
+    "edit": "Edit",
+    "turnOff": "Switch off",
+    "turnOn": "Switch on",
+    "delete": "Delete",
+    "confirmDelete": "Yes, delete",
+    "new": "New subject",
+    "newHint": "Choose a one-paper or a two-paper subject.",
+    "kind": "Type",
+    "kinds": {
+      "SINGLE": "One paper",
+      "TWO_PAPER": "Two papers"
+    },
+    "nameBn": "Name (Bangla)",
+    "nameEn": "Name (English)",
+    "code1": "1st paper code",
+    "code2": "2nd paper code",
+    "papersPreview": "Will create: \"{first}\" and \"{second}\"",
+    "religion": "Religious studies",
+    "notReligion": "Not a religion subject",
+    "religions": {
+      "ISLAM": "Islam",
+      "HINDU": "Hindu",
+      "BUDDHIST": "Buddhist",
+      "CHRISTIAN": "Christian",
+      "OTHER": "Other"
+    },
+    "create": "Add subject",
+    "save": "Save",
+    "saving": "Saving...",
+    "saved": "Subject added.",
+    "cancel": "Cancel",
+    "editTitle": "Edit subject",
+    "editSingleHint": "Name, code and religion can change.",
+    "editPaperHint": "This is a paper. Changing its code also changes the parent subject's code.",
+    "editCombinedHint": "The parent of a two-paper subject. Its code comes from the papers' codes.",
+    "errors": {
+      "name": "Name must be 1 to 60 characters.",
+      "code": "Use only English letters, digits or - in the code (up to 10).",
+      "sameCodes": "The two papers need different codes.",
+      "codeTaken": "Code already used: {codes}",
+      "religion": "Pick a religion from the list.",
+      "kind": "Pick a type.",
+      "notFound": "Subject not found."
     }
   }
 }
