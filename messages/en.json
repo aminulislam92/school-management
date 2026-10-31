@@ -563,7 +563,8 @@
     "groups": "Groups",
     "sections": "Sections",
     "subjects": "Subjects",
-    "classSubjects": "Class subjects"
+    "classSubjects": "Class subjects",
+    "holidays": "Holidays"
   },
   "classes": {
     "title": "Classes",
@@ -817,6 +818,38 @@
       "notFound": "Not found.",
       "sameClass": "Can't copy a class onto itself.",
       "nothingToCopy": "Nothing new to copy."
+    }
+  },
+  "holidays": {
+    "title": "Holidays",
+    "hint": "Public holidays, Eid, winter or summer vacation. No attendance is taken on these days.",
+    "year": "Year",
+    "summary": "{days, number} holiday days in {year}.",
+    "weekly": "Weekly days off: {days}.",
+    "none": "none",
+    "changeWeekly": "Change",
+    "empty": "No holidays in this year.",
+    "titleField": "Holiday",
+    "dates": "Dates",
+    "days": "Days",
+    "delete": "Delete",
+    "confirmDelete": "Yes, delete",
+    "new": "New holiday",
+    "newHint": "For a one-day holiday leave \"End\" empty.",
+    "titlePlaceholder": "e.g. Eid ul-Fitr",
+    "from": "Start",
+    "to": "End (optional)",
+    "toHint": "For a longer break give the start and end; every day in between becomes a holiday (up to 60 days).",
+    "add": "Add holiday",
+    "saving": "Saving...",
+    "added": "Added {days, number} holiday days.",
+    "errors": {
+      "title": "Name must be 2 to 80 characters.",
+      "date": "Enter a valid date.",
+      "toBeforeFrom": "The end can't be before the start.",
+      "tooLong": "At most 60 days at once.",
+      "taken": "These days are already holidays: {dates}",
+      "notFound": "Not found."
     }
   }
 }

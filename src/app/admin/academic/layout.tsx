@@ -1,7 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { SectionTabs } from "@/components/shell/section-tabs";
 
-// Holidays get their tab in T1.21.
 export default async function AcademicLayout({ children }: { children: React.ReactNode }) {
   const t = await getTranslations("academicTabs");
   return (
@@ -15,6 +14,7 @@ export default async function AcademicLayout({ children }: { children: React.Rea
           { href: "/admin/academic/sections", label: t("sections") },
           { href: "/admin/academic/subjects", label: t("subjects") },
           { href: "/admin/academic/class-subjects", label: t("classSubjects") },
+          { href: "/admin/academic/holidays", label: t("holidays") },
         ]}
       />
       {children}
