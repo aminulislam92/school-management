@@ -1,4 +1,5 @@
 import "server-only";
+import { cacheLife, cacheTag } from "next/cache";
 import { cache } from "react";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
@@ -64,3 +65,25 @@ export const getSchoolDb = cache(async () => {
   const school = await requireSchool();
   return { school, sdb: forSchool(school.id) };
 });
+
+export const schoolLocaleTag = (schoolId: number) => `school-locale-${schoolId}`;
+
+/**
+ * The school's default language, for visitors who haven't picked one.
+ * Read on EVERY page (from src/i18n/request.ts, in the root layout), so it is
+ * cached: a database query there would make every page wait. It's safe to cache
+ * because the school's address is the cache key and the value is public.
+ * Saving the setting clears it: updateTag(schoolLocaleTag(id)).
+ */
+export async function schoolDefaultLocale(tenant: TenantHost): Promise<string | null> {
+  "use cache";
+  cacheLife("days");
+  if (tenant.kind === "root") return null;
+  const school = await db.school.findUnique({
+    where: tenant.kind === "subdomain" ? { code: tenant.code } : { customDomain: tenant.domain },
+    select: { id: true, setting: { select: { defaultLocale: true } } },
+  });
+  if (!school) return null;
+  cacheTag(schoolLocaleTag(school.id));
+  return school.setting?.defaultLocale ?? null;
+}

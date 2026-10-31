@@ -39,7 +39,7 @@ The developer is learning Next.js: after each change, explain briefly in Bangla 
 - Per-year student data (class, section, roll, group, 4th subject) lives in `Enrollment`, not `Student`.
 - Never hard-delete students, invoices, payments or schools: use status / VOID.
 - Log changes to marks, fees, discounts, late-fee waivers and receipts in `AuditLog`.
-- Cache Components: code that reads cookies/headers/session must render inside `<Suspense>` (root layout already wraps pages once). Don't add `'use cache'` to anything that shows per-school or per-user data.
+- Cache Components: code that reads cookies/headers/session must render inside `<Suspense>` (root layout already wraps pages once). Don't add `'use cache'` to per-user data, or to per-school data unless the school is a function argument (the cache key) and the data is public; then tag it and `updateTag` it on save (example: `schoolDefaultLocale` in `src/lib/tenant.ts`). Never query the database in the root layout or `src/i18n/request.ts` without such a cache.
 - Request-time data inside a page (database queries, `connection()`, `new Date()`, `Math.random()`) goes in its own async component wrapped in the page's own `<Suspense fallback={...}>`; call `await connection()` before using the current time. Check `npm run dev` output for "uncached data" / "unstable value" errors — `npm run build` does not catch them all.
 - UI text goes in `messages/bn.json` and `messages/en.json`; no hardcoded strings in components.
 - Numbers inside messages use ICU number format (`{count, number}`), so Bangla shows ৮ instead of 8. Dates/times use `format.dateTime(...)` from next-intl.

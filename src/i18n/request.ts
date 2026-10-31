@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { getRequestConfig } from "next-intl/server";
+import { getTenantHost, schoolDefaultLocale } from "@/lib/tenant";
 import { defaultLocale, isLocale, LOCALE_COOKIE } from "./config";
 
 // next-intl loads this on every request. The language comes from a cookie
@@ -8,7 +9,9 @@ import { defaultLocale, isLocale, LOCALE_COOKIE } from "./config";
 // render inside <Suspense> (the root layout does this once for all pages).
 export default getRequestConfig(async () => {
   const cookieLocale = (await cookies()).get(LOCALE_COOKIE)?.value;
-  const locale = isLocale(cookieLocale) ? cookieLocale : defaultLocale;
+  // No choice made yet on this browser → the school's own default language.
+  const schoolLocale = cookieLocale ? null : await schoolDefaultLocale(await getTenantHost());
+  const locale = isLocale(cookieLocale) ? cookieLocale : isLocale(schoolLocale) ? schoolLocale : defaultLocale;
 
   return {
     locale,

@@ -3,6 +3,7 @@
 import type { Role } from "@prisma/client";
 import { db } from "@/lib/db";
 import { normalizeBdPhone, toEnglishDigits } from "@/lib/bangla";
+import { studentLoginAllowed } from "@/server/services/student-login";
 import { burnPasswordCheck, verifyPassword } from "./password";
 
 export const MAX_FAILED_LOGINS = 5;
@@ -32,7 +33,8 @@ export type AuthResult =
   | { ok: true; user: AuthUser }
   | { ok: false; reason: "invalid" }
   | { ok: false; reason: "locked"; lockedUntil: Date }
-  | { ok: false; reason: "inactive" };
+  | { ok: false; reason: "inactive" }
+  | { ok: false; reason: "studentLoginOff" };
 
 /**
  * @param schoolId the school of the domain being used, or null on the main site.
@@ -81,6 +83,11 @@ export async function authenticate(
   // Password is right. Only now reveal that the account is switched off.
   if (!user.isActive) return { ok: false, reason: "inactive" };
 
+  // A student (with no staff role) logs in only if the school allows their class.
+  if (user.schoolId !== null && roles.length > 0 && roles.every((r) => r === "STUDENT")) {
+    if (!(await studentMayLogIn(user.id, user.schoolId))) return { ok: false, reason: "studentLoginOff" };
+  }
+
   await db.user.update({
     where: { id: user.id },
     data: { failedLoginCount: 0, lockedUntil: null, lastLoginAt: now },
@@ -96,4 +103,17 @@ export async function authenticate(
       sessionVersion: user.sessionVersion,
     },
   };
+}
+
+/** The school's "students log in from class X" setting vs. the student's class this session. */
+async function studentMayLogIn(userId: number, schoolId: number): Promise<boolean> {
+  const [setting, enrollment] = await Promise.all([
+    db.schoolSetting.findUnique({ where: { schoolId }, select: { studentLoginFromOrder: true } }),
+    db.enrollment.findFirst({
+      where: { schoolId, status: "ACTIVE", student: { userId, status: "ACTIVE" }, session: { isCurrent: true } },
+      orderBy: { id: "desc" },
+      select: { class: { select: { order: true } } },
+    }),
+  ]);
+  return studentLoginAllowed(setting?.studentLoginFromOrder ?? null, enrollment?.class.order ?? null);
 }

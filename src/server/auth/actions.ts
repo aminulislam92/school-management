@@ -9,7 +9,7 @@ import { createSession, deleteSession, getCurrentUser, homePathFor } from "./dal
 import { requestPasswordReset, resetPassword, type ResetResult } from "./password-reset";
 
 export type LoginState = {
-  error?: "required" | "invalid" | "locked" | "inactive" | "noSchool" | "schoolClosed";
+  error?: "required" | "invalid" | "locked" | "inactive" | "noSchool" | "schoolClosed" | "studentLoginOff";
   minutes?: number;
   identifier?: string;
 };

@@ -54,8 +54,11 @@ describe("authenticate", () => {
       const r = await authenticate({ identifier, password: PW, schoolId: A });
       expect(r.ok, identifier).toBe(true);
     }
-    const student = await authenticate({ identifier: `${run}-0001`, password: PW, schoolId: A });
-    expect(student.ok && student.user.roles).toEqual(["STUDENT"]);
+    // The Student ID finds the student and the password is checked; this student has
+    // no class this session, so the school's student-login rule (T1.15) says no.
+    // The full allowed/not-allowed cases are in src/server/school/settings.db.test.ts.
+    expect(await authenticate({ identifier: `${run}-0001`, password: PW, schoolId: A })).toEqual({ ok: false, reason: "studentLoginOff" });
+    expect(await authenticate({ identifier: `${run}-0001`, password: "wrong", schoolId: A })).toEqual({ ok: false, reason: "invalid" });
   });
 
   it("same email in two schools: each school checks its own user", async () => {

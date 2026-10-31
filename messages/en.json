@@ -40,7 +40,8 @@
       "locked": "Too many wrong passwords. Try again in {minutes, number} minutes.",
       "inactive": "This account is switched off. Please contact the school office.",
       "noSchool": "No school was found at this address.",
-      "schoolClosed": "This school's account is currently closed. Please contact the service provider."
+      "schoolClosed": "This school's account is currently closed. Please contact the service provider.",
+      "studentLoginOff": "Login is off for students of your class. Log in with your guardian's mobile or contact the school."
     }
   },
   "areas": {
@@ -464,5 +465,47 @@
         "failed": "Upload failed. Check the internet and try again."
       }
     }
+  },
+  "generalSettings": {
+    "title": "General settings",
+    "hint": "The school's language, days off, student login and automatic SMS.",
+    "save": "Save",
+    "saving": "Saving...",
+    "saved": "Saved.",
+    "languageTitle": "Default language",
+    "languageHint": "People see the school site in this language the first time. Everyone can switch it for themselves.",
+    "holidaysTitle": "Weekly days off",
+    "holidaysHint": "No attendance is taken on these days. Up to 3 days.",
+    "days": {
+      "SAT": "Sat",
+      "SUN": "Sun",
+      "MON": "Mon",
+      "TUE": "Tue",
+      "WED": "Wed",
+      "THU": "Thu",
+      "FRI": "Fri"
+    },
+    "studentTitle": "Student portal",
+    "studentHint": "For younger classes, guardians log in with their mobile number instead.",
+    "studentLoginFrom": "Students can log in themselves",
+    "studentLoginOff": "Nobody (off)",
+    "fromClass": "{name} and above",
+    "studentCanSeeFees": "Students can see their own fees and dues",
+    "studentCanSeeFeesHint": "When off, only guardians see fees.",
+    "smsTitle": "Automatic SMS",
+    "smsHint": "SMS goes to the guardian's mobile automatically (uses SMS credit).",
+    "smsOnAbsent": "When a student is absent",
+    "smsOnPayment": "When a fee is paid (with receipt number)",
+    "smsOnResult": "When results are published",
+    "errors": {
+      "locale": "Pick a language.",
+      "holidays": "No more than 3 days off a week.",
+      "studentLogin": "Pick a class from the list."
+    }
+  },
+  "settingsTabs": {
+    "label": "Settings",
+    "school": "School profile",
+    "general": "General"
   }
 }

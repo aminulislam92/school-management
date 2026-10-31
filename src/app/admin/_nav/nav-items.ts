@@ -36,7 +36,7 @@ export const NAV: NavGroup[] = [
       { key: "feeSetup", href: "/admin/fees/types", icon: "feeSetup", permission: "fee.setup", ready: false },
       { key: "staff", href: "/admin/staff", icon: "staff", permission: "staff.manage", ready: false },
       { key: "users", href: "/admin/users", icon: "users", permission: "user.manage", ready: false },
-      { key: "settings", href: "/admin/settings/school", icon: "settings", permission: "settings.manage", ready: true },
+      { key: "settings", href: "/admin/settings", icon: "settings", permission: "settings.manage", ready: true },
       { key: "auditLog", href: "/admin/audit-logs", icon: "audit", permission: "audit.read", ready: false },
     ],
   },
