@@ -7,12 +7,15 @@ export const SESSION_DAYS = 7;
 
 /**
  * What the cookie carries. Keep it minimal: no names, phones or emails.
- * uid = User.id, sch = School.id (null for the super admin), roles = Role[]
+ * uid = User.id, sch = School.id (null for the super admin), roles = Role[],
+ * ver = User.sessionVersion when the cookie was made (a password change bumps
+ * it, which makes every older cookie invalid)
  */
 export type SessionPayload = {
   uid: number;
   sch: number | null;
   roles: Role[];
+  ver: number;
 };
 
 export function secretKey(secret = process.env.AUTH_SECRET): Uint8Array {
@@ -38,11 +41,11 @@ export async function verifySession(
   if (!token) return null;
   try {
     const { payload } = await jwtVerify(token, key, { algorithms: ["HS256"] });
-    const { uid, sch, roles } = payload as Record<string, unknown>;
-    if (typeof uid !== "number") return null;
+    const { uid, sch, roles, ver } = payload as Record<string, unknown>;
+    if (typeof uid !== "number" || typeof ver !== "number") return null;
     if (sch !== null && typeof sch !== "number") return null;
     if (!Array.isArray(roles) || !roles.every((r) => typeof r === "string")) return null;
-    return { uid, sch, roles: roles as Role[] };
+    return { uid, sch, roles: roles as Role[], ver };
   } catch {
     return null;
   }

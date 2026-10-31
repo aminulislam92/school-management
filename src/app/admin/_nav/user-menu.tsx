@@ -1,6 +1,7 @@
 "use client";
 
-import { ChevronDown, LogOut } from "lucide-react";
+import Link from "next/link";
+import { ChevronDown, KeyRound, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -17,10 +18,12 @@ export function UserMenu({
   name,
   roleLabels,
   signOutLabel,
+  changePasswordLabel,
 }: {
   name: string;
   roleLabels: string[];
   signOutLabel: string;
+  changePasswordLabel: string;
 }) {
   return (
     <DropdownMenu>
@@ -36,6 +39,10 @@ export function UserMenu({
           </DropdownMenuLabel>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
+        <DropdownMenuItem render={<Link href="/change-password" />}>
+          <KeyRound className="size-4" />
+          {changePasswordLabel}
+        </DropdownMenuItem>
         <DropdownMenuItem onClick={() => logoutAction()}>
           <LogOut className="size-4" />
           {signOutLabel}

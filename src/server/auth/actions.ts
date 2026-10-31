@@ -4,7 +4,8 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { getCurrentSchool, getTenantHost } from "@/lib/tenant";
 import { authenticate } from "./authenticate";
-import { createSession, deleteSession, homePathFor } from "./dal";
+import { changePassword, type ChangePasswordResult } from "./change-password";
+import { createSession, deleteSession, getCurrentUser, homePathFor } from "./dal";
 
 export type LoginState = {
   error?: "required" | "invalid" | "locked" | "inactive" | "noSchool";
@@ -44,11 +45,37 @@ export async function loginAction(_prev: LoginState, formData: FormData): Promis
     return { error: result.reason, identifier };
   }
 
-  await createSession({ uid: result.user.id, sch: result.user.schoolId, roles: result.user.roles });
-  redirect(homePathFor(result.user.roles));
+  const { id, schoolId: sch, roles, sessionVersion, mustChangePassword } = result.user;
+  await createSession({ uid: id, sch, roles, ver: sessionVersion });
+  redirect(mustChangePassword ? "/change-password" : homePathFor(roles));
 }
 
 export async function logoutAction() {
   await deleteSession();
   redirect("/login");
+}
+
+export type ChangePasswordState = {
+  error?: Extract<ChangePasswordResult, { ok: false }>["problem"];
+};
+
+export async function changePasswordAction(
+  _prev: ChangePasswordState,
+  formData: FormData,
+): Promise<ChangePasswordState> {
+  const user = await getCurrentUser();
+  if (!user) redirect("/login");
+
+  const result = await changePassword({
+    userId: user.id,
+    schoolId: user.schoolId,
+    current: String(formData.get("current") ?? ""),
+    next: String(formData.get("next") ?? ""),
+    confirm: String(formData.get("confirm") ?? ""),
+  });
+  if (!result.ok) return { error: result.problem };
+
+  // Other devices are now logged out; give this device a fresh cookie.
+  await createSession({ uid: user.id, sch: user.schoolId, roles: user.roles, ver: result.sessionVersion });
+  redirect(homePathFor(user.roles));
 }

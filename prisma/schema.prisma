@@ -414,6 +414,7 @@ model User {
   passwordHash       String? // guardians may use OTP only
   isActive           Boolean   @default(true)
   mustChangePassword Boolean   @default(false)
+  sessionVersion     Int       @default(0) // +1 on password change: logs out other devices
   failedLoginCount   Int       @default(0)
   lockedUntil        DateTime?
   locale             String?

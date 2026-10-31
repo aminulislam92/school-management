@@ -128,3 +128,8 @@
     @apply font-sans;
   }
 }
+/* Microsoft Edge adds its own "reveal password" eye; we have our own (PasswordInput). */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}

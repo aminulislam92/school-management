@@ -102,6 +102,7 @@ async function HeaderUser() {
       name={(locale === "bn" && user.nameBn) || user.nameEn}
       roleLabels={user.roles.map((r) => t(`roles.${r}`))}
       signOutLabel={t("auth.signOut")}
+      changePasswordLabel={t("changePassword.menuItem")}
     />
   );
 }

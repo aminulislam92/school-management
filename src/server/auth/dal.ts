@@ -60,7 +60,12 @@ export const getCurrentUser = cache(async () => {
   if (!session) return null;
 
   const user = await db.user.findFirst({
-    where: { id: session.uid, schoolId: session.sch, isActive: true },
+    where: {
+      id: session.uid,
+      schoolId: session.sch,
+      isActive: true,
+      sessionVersion: session.ver, // password changed since this cookie was made → logged out
+    },
     select: {
       id: true,
       schoolId: true,
@@ -68,6 +73,7 @@ export const getCurrentUser = cache(async () => {
       phone: true,
       username: true,
       mustChangePassword: true,
+      sessionVersion: true,
       roles: { select: { role: true } },
       staff: { select: { nameBn: true, nameEn: true } },
       student: { select: { nameBn: true, nameEn: true, studentCode: true } },
@@ -89,11 +95,13 @@ export type CurrentUser = NonNullable<Awaited<ReturnType<typeof getCurrentUser>>
 
 /**
  * Use at the top of every protected page and server action.
- * Not logged in → /login. Logged in but wrong role → their own home page.
+ * Not logged in → /login. Must change password first → /change-password.
+ * Logged in but wrong role → their own home page.
  */
 export async function requireUser(allowedRoles?: Role[]): Promise<CurrentUser> {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
+  if (user.mustChangePassword) redirect("/change-password");
   if (allowedRoles && !user.roles.some((r) => allowedRoles.includes(r))) {
     redirect(homePathFor(user.roles));
   }
@@ -118,6 +126,8 @@ export async function requirePermission(permission: Permission): Promise<Current
  */
 export async function assertPermission(permission: Permission): Promise<CurrentUser> {
   const user = await getCurrentUser();
-  if (!user || !can(user.roles, permission)) throw new ForbiddenError(permission);
+  if (!user || user.mustChangePassword || !can(user.roles, permission)) {
+    throw new ForbiddenError(permission);
+  }
   return user;
 }

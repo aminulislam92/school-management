@@ -16,7 +16,9 @@
     "edit": "Edit",
     "delete": "Delete",
     "search": "Search",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password"
   },
   "notFound": {
     "title": "Not found",
@@ -35,7 +37,7 @@
     "errors": {
       "required": "Enter your email/mobile/Student ID and password.",
       "invalid": "Those sign-in details are not correct.",
-      "locked": "Too many wrong passwords. Try again in {minutes} minutes.",
+      "locked": "Too many wrong passwords. Try again in {minutes, number} minutes.",
       "inactive": "This account is switched off. Please contact the school office.",
       "noSchool": "No school was found at this address."
     }
@@ -87,5 +89,28 @@
   "dashboard": {
     "comingTitle": "Dashboard in progress",
     "comingText": "Today's attendance, fee collection and dues will appear here. Start from the menu on the left; items marked \"Soon\" arrive in the next steps."
+  },
+  "changePassword": {
+    "title": "Change password",
+    "description": "After a change you are signed out on every other device.",
+    "firstLogin": "This is your first sign-in. Please set your own password now.",
+    "current": "Current password",
+    "next": "New password",
+    "confirm": "Repeat new password",
+    "rules": "At least {min, number} characters, with both letters and numbers.",
+    "save": "Change password",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "menuItem": "Change password",
+    "errors": {
+      "wrongCurrent": "The current password is not correct.",
+      "tooShort": "The password must be at least {min, number} characters.",
+      "tooLong": "The password is too long.",
+      "needsLetterAndNumber": "Use both letters and numbers.",
+      "tooCommon": "That password is too easy to guess. Choose another.",
+      "sameAsOld": "The new password must differ from the old one.",
+      "mismatch": "The two new passwords don't match.",
+      "noUser": "Account not found. Please sign in again."
+    }
   }
 }

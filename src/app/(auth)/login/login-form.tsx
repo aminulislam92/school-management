@@ -4,6 +4,7 @@ import { useActionState } from "react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/password-input";
 import { Label } from "@/components/ui/label";
 import { loginAction, type LoginState } from "@/server/auth/actions";
 
@@ -28,10 +29,9 @@ export function LoginForm() {
 
       <div className="space-y-2">
         <Label htmlFor="password">{t("password")}</Label>
-        <Input
+        <PasswordInput
           id="password"
           name="password"
-          type="password"
           autoComplete="current-password"
           required
           aria-invalid={!!state.error}

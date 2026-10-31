@@ -7,32 +7,40 @@ const otherKey = secretKey("another-secret-that-is-long-enough-0987654321");
 
 describe("session token", () => {
   it("round-trips the payload", async () => {
-    const token = await signSession({ uid: 5, sch: 2, roles: ["ADMIN"] }, key);
-    expect(await verifySession(token, key)).toEqual({ uid: 5, sch: 2, roles: ["ADMIN"] });
+    const token = await signSession({ uid: 5, sch: 2, roles: ["ADMIN"], ver: 0 }, key);
+    expect(await verifySession(token, key)).toEqual({ uid: 5, sch: 2, roles: ["ADMIN"], ver: 0 });
   });
 
   it("keeps sch = null for the super admin", async () => {
-    const token = await signSession({ uid: 1, sch: null, roles: ["SUPER_ADMIN"] }, key);
+    const token = await signSession({ uid: 1, sch: null, roles: ["SUPER_ADMIN"], ver: 0 }, key);
     expect((await verifySession(token, key))?.sch).toBeNull();
   });
 
   it("rejects a token signed with another secret", async () => {
-    const token = await signSession({ uid: 5, sch: 2, roles: ["ADMIN"] }, otherKey);
+    const token = await signSession({ uid: 5, sch: 2, roles: ["ADMIN"], ver: 0 }, otherKey);
     expect(await verifySession(token, key)).toBeNull();
   });
 
   it("rejects a tampered token", async () => {
-    const token = await signSession({ uid: 5, sch: 2, roles: ["TEACHER"] }, key);
+    const token = await signSession({ uid: 5, sch: 2, roles: ["TEACHER"], ver: 0 }, key);
     const [h, , s] = token.split(".");
-    const fakeBody = Buffer.from(JSON.stringify({ uid: 5, sch: 2, roles: ["ADMIN"] })).toString("base64url");
+    const fakeBody = Buffer.from(JSON.stringify({ uid: 5, sch: 2, roles: ["ADMIN"], ver: 0 })).toString("base64url");
     expect(await verifySession(`${h}.${fakeBody}.${s}`, key)).toBeNull();
   });
 
   it("rejects an expired token", async () => {
-    const token = await new SignJWT({ uid: 5, sch: 2, roles: ["ADMIN"] })
+    const token = await new SignJWT({ uid: 5, sch: 2, roles: ["ADMIN"], ver: 0 })
       .setProtectedHeader({ alg: "HS256" })
       .setIssuedAt(Math.floor(Date.now() / 1000) - 3600)
       .setExpirationTime(Math.floor(Date.now() / 1000) - 60)
+      .sign(key);
+    expect(await verifySession(token, key)).toBeNull();
+  });
+
+  it("rejects an old token without a version", async () => {
+    const token = await new SignJWT({ uid: 5, sch: 2, roles: ["ADMIN"] })
+      .setProtectedHeader({ alg: "HS256" })
+      .setExpirationTime("1h")
       .sign(key);
     expect(await verifySession(token, key)).toBeNull();
   });

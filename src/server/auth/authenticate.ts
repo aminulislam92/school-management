@@ -25,6 +25,7 @@ export type AuthUser = {
   schoolId: number | null;
   roles: Role[];
   mustChangePassword: boolean;
+  sessionVersion: number;
 };
 
 export type AuthResult =
@@ -92,6 +93,7 @@ export async function authenticate(
       schoolId: user.schoolId,
       roles,
       mustChangePassword: user.mustChangePassword,
+      sessionVersion: user.sessionVersion,
     },
   };
 }
