@@ -560,7 +560,8 @@
     "label": "Academic setup",
     "sessions": "Sessions",
     "classes": "Classes",
-    "groups": "Groups"
+    "groups": "Groups",
+    "sections": "Sections"
   },
   "classes": {
     "title": "Classes",
@@ -621,6 +622,64 @@
     "groupedSections": "This class has sections split by group, so groups can't be switched off.",
     "classHasStudents": "This class has students this session, so it can't be switched off.",
     "groupInUse": "This group has sections or students, so it can't be switched off.",
-    "levelExists": "This level already exists."
+    "levelExists": "This level already exists.",
+    "sectionHasStudents": "This section has students this session, so it can't be switched off.",
+    "sectionUsed": "This section has been used, so it can't be deleted. Switch it off instead.",
+    "class": "Its class is switched off; switch the class on first."
+  },
+  "sectionsPage": {
+    "title": "Sections",
+    "hint": "Each section = class + name + version + shift (+ group in Classes 9–12). Admission and attendance go by section.",
+    "class": "Class",
+    "name": "Name",
+    "names": "Section names",
+    "namesPlaceholder": "e.g. A, B, C",
+    "namesHint": "Separate with commas to create several at once.",
+    "version": "Version",
+    "shift": "Shift",
+    "group": "Group",
+    "capacity": "Seats (optional)",
+    "capacityPlaceholder": "e.g. 60",
+    "versions": {
+      "BANGLA": "Bangla",
+      "ENGLISH": "English"
+    },
+    "shifts": {
+      "MORNING": "Morning",
+      "DAY": "Day"
+    },
+    "mixedGroups": "All groups together",
+    "students": "Students (current)",
+    "studentsOf": "{count, number} / {capacity, number}",
+    "off": "Off",
+    "edit": "Edit",
+    "turnOff": "Switch off",
+    "turnOn": "Switch on",
+    "delete": "Delete",
+    "confirmDelete": "Yes, delete",
+    "noSectionsAdd": "No sections yet — add one",
+    "new": "New sections",
+    "newHint": "Pick a class and name the sections.",
+    "create": "Create sections",
+    "save": "Save",
+    "saving": "Saving...",
+    "saved": "Sections created.",
+    "cancel": "Cancel",
+    "editTitle": "Edit section",
+    "errors": {
+      "class": "Pick a class that is switched on.",
+      "names": "Give 1 to 10 names, each up to 20 characters.",
+      "version": "Pick a version.",
+      "shift": "Pick a shift.",
+      "group": "Pick a group that is switched on.",
+      "capacity": "Seats must be between 1 and 500.",
+      "noGroupsInClass": "This class has no groups.",
+      "exists": "This class, version and shift already has a section named \"{names}\".",
+      "classLocked": "A section's class can't change.",
+      "oneName": "Give one name when editing.",
+      "groupHasStudents": "This section has students this session, so its group can't change.",
+      "capacityBelow": "It already has {count, number} students; seats can't be fewer.",
+      "notFound": "Section not found."
+    }
   }
 }

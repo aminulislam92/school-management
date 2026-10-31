@@ -1,7 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { SectionTabs } from "@/components/shell/section-tabs";
 
-// Sections, subjects ... get their tabs in T1.18–T1.21.
+// Subjects, class subjects and holidays get their tabs in T1.19–T1.21.
 export default async function AcademicLayout({ children }: { children: React.ReactNode }) {
   const t = await getTranslations("academicTabs");
   return (
@@ -12,6 +12,7 @@ export default async function AcademicLayout({ children }: { children: React.Rea
           { href: "/admin/academic/sessions", label: t("sessions") },
           { href: "/admin/academic/classes", label: t("classes") },
           { href: "/admin/academic/groups", label: t("groups") },
+          { href: "/admin/academic/sections", label: t("sections") },
         ]}
       />
       {children}
