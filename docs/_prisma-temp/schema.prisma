@@ -1,0 +1,1302 @@
+// School Management System (Bangladesh) — multi-school SaaS
+// Database: MySQL 8 (utf8mb4 / utf8mb4_unicode_ci)
+// Rule: every school-owned row has schoolId; every query filters by it.
+// Child tables without schoolId (lines, allocations, weights...) are only
+// ever read through their parent.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────── Enums ───────────────────────────────
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  OFFICE_STAFF
+  ACCOUNTANT
+  TEACHER
+  CLASS_TEACHER
+  STUDENT
+  GUARDIAN
+}
+
+enum SchoolStatus {
+  ACTIVE
+  SUSPENDED
+  CLOSED
+}
+
+enum SubscriptionStatus {
+  TRIAL
+  ACTIVE
+  GRACE
+  SUSPENDED
+  CANCELLED
+}
+
+enum BillingCycle {
+  MONTHLY
+  YEARLY
+}
+
+enum Level {
+  PRE_PRIMARY // Play, Nursery, KG
+  PRIMARY // 1-5
+  SECONDARY // 6-10
+  HIGHER_SECONDARY // 11-12
+}
+
+enum SessionType {
+  SCHOOL // Play-10, usually Jan-Dec
+  COLLEGE // 11-12, dates set by the school
+}
+
+enum Version {
+  BANGLA
+  ENGLISH
+}
+
+enum Shift {
+  MORNING
+  DAY
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum Religion {
+  ISLAM
+  HINDU
+  BUDDHIST
+  CHRISTIAN
+  OTHER
+}
+
+enum BloodGroup {
+  A_POS
+  A_NEG
+  B_POS
+  B_NEG
+  AB_POS
+  AB_NEG
+  O_POS
+  O_NEG
+}
+
+enum StudentStatus {
+  ACTIVE
+  LEFT // TC given
+  GRADUATED
+}
+
+enum EnrollmentStatus {
+  ACTIVE
+  PROMOTED
+  DETAINED // failed, stays in same class next session
+  LEFT
+  GRADUATED
+}
+
+enum GuardianRelation {
+  FATHER
+  MOTHER
+  OTHER
+}
+
+enum SubjectType {
+  COMPULSORY
+  OPTIONAL // 4th subject
+  RELIGION
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  LEAVE
+}
+
+enum DayOfWeek {
+  SAT
+  SUN
+  MON
+  TUE
+  WED
+  THU
+  FRI
+}
+
+enum FeeFrequency {
+  ONE_TIME
+  MONTHLY
+  EXAM
+}
+
+enum DiscountType {
+  PERCENT
+  FIXED
+}
+
+enum LateFeeType {
+  FIXED_ONCE
+  PER_DAY
+  PER_MONTH
+}
+
+enum InvoiceStatus {
+  UNPAID
+  PARTIAL
+  PAID
+  CANCELLED
+}
+
+enum InvoiceLineType {
+  FEE
+  DISCOUNT // stored as negative amount
+  LATE_FEE
+  LATE_FEE_WAIVER // stored as negative amount
+}
+
+enum PaymentMethod {
+  CASH
+  BKASH
+  NAGAD
+  ROCKET
+  BANK
+  OTHER
+}
+
+enum PaymentStatus {
+  VALID
+  VOID
+}
+
+enum ExamType {
+  CLASS_TEST
+  HALF_YEARLY
+  PRE_TEST
+  TEST
+  ANNUAL
+  OTHER
+}
+
+enum ResultMethod {
+  FINAL_ONLY
+  WEIGHTED
+}
+
+enum ResultKind {
+  EXAM // result of one exam
+  FINAL // year-end result from ResultConfig
+}
+
+enum ResultBatchStatus {
+  DRAFT
+  PROCESSED
+  PUBLISHED
+}
+
+enum NoticeAudience {
+  ALL
+  STAFF
+  STUDENTS_GUARDIANS
+  CLASS
+  SECTION
+}
+
+enum SmsDriver {
+  PROVIDER_API
+  MOBILE_GATEWAY
+}
+
+enum SmsStatus {
+  QUEUED
+  SENDING
+  SENT
+  DELIVERED
+  FAILED
+}
+
+enum SmsPurpose {
+  OTP
+  ABSENT
+  RECEIPT
+  DUE_REMINDER
+  RESULT
+  NOTICE
+  BULK
+  SYSTEM
+}
+
+enum SmsCreditType {
+  PURCHASE
+  USAGE
+  ADJUSTMENT
+}
+
+// ─────────────────────────── SaaS: schools ───────────────────────────
+
+model Plan {
+  id            Int            @id @default(autoincrement())
+  name          String
+  price         Decimal        @db.Decimal(10, 2)
+  billingCycle  BillingCycle
+  maxStudents   Int
+  features      Json // e.g. ["attendance","fees","exams","sms","portal"]
+  isActive      Boolean        @default(true)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  subscriptions Subscription[]
+}
+
+model School {
+  id           Int          @id @default(autoincrement())
+  code         String       @unique // subdomain: code.yourapp.com
+  nameBn       String
+  nameEn       String
+  eiin         String?
+  board        String?
+  levels       Json // e.g. ["PRE_PRIMARY","PRIMARY","SECONDARY","HIGHER_SECONDARY"]
+  phone        String?
+  email        String?
+  division     String?
+  district     String?
+  upazila      String?
+  addressLine  String?      @db.Text
+  logoUrl      String?
+  signatureUrl String? // head teacher signature image
+  customDomain String?      @unique
+  status       SchoolStatus @default(ACTIVE)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  setting              SchoolSetting?
+  subscriptions        Subscription[]
+  subscriptionPayments SubscriptionPayment[]
+  smsCredits           SmsCreditTransaction[]
+  smsProviders         SmsProviderConfig[]
+  smsDevices           SmsGatewayDevice[]
+  smsTemplates         SmsTemplate[]
+  smsMessages          SmsMessage[]
+  counters             SchoolCounter[]
+  users                User[]
+  otpCodes             OtpCode[]
+  sessions             AcademicSession[]
+  classes              SchoolClass[]
+  groups               Group[]
+  sections             Section[]
+  subjects             Subject[]
+  holidays             Holiday[]
+  students             Student[]
+  guardians            Guardian[]
+  enrollments          Enrollment[]
+  staff                Staff[]
+  staffAttendances     StaffAttendance[]
+  attendances          Attendance[]
+  routinePeriods       RoutinePeriod[]
+  feeTypes             FeeType[]
+  feeStructures        FeeStructure[]
+  lateFeeRules         LateFeeRule[]
+  discounts            StudentDiscount[]
+  invoices             Invoice[]
+  payments             Payment[]
+  expenses             Expense[]
+  gradeScales          GradeScale[]
+  exams                Exam[]
+  marks                Mark[]
+  resultConfigs        ResultConfig[]
+  resultBatches        ResultBatch[]
+  results              Result[]
+  notices              Notice[]
+  auditLogs            AuditLog[]
+}
+
+model SchoolSetting {
+  id                    Int       @id @default(autoincrement())
+  schoolId              Int       @unique
+  defaultLocale         String    @default("bn")
+  weeklyHolidays        Json // e.g. ["FRI"]
+  studentLoginFromOrder Int? // students of classes with order >= this can log in; null = off
+  studentCanSeeFees     Boolean   @default(true)
+  lateFeeEnabled        Boolean   @default(false)
+  smsOnAbsent           Boolean   @default(true)
+  smsOnPayment          Boolean   @default(true)
+  smsOnResult           Boolean   @default(true)
+  primarySmsDriver      SmsDriver @default(PROVIDER_API)
+  smsFallbackEnabled    Boolean   @default(true)
+  otpSmsDriver          SmsDriver @default(PROVIDER_API)
+  smsCreditBalance      Int       @default(0) // cached sum of SmsCreditTransaction
+  updatedAt             DateTime  @updatedAt
+
+  school School @relation(fields: [schoolId], references: [id])
+}
+
+model Subscription {
+  id          Int                @id @default(autoincrement())
+  schoolId    Int
+  planId      Int
+  status      SubscriptionStatus @default(TRIAL)
+  startsAt    DateTime
+  endsAt      DateTime
+  graceEndsAt DateTime?
+  note        String?            @db.Text
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  school   School                @relation(fields: [schoolId], references: [id])
+  plan     Plan                  @relation(fields: [planId], references: [id])
+  payments SubscriptionPayment[]
+
+  @@index([schoolId, status])
+  @@index([endsAt])
+}
+
+model SubscriptionPayment {
+  id             Int           @id @default(autoincrement())
+  schoolId       Int
+  subscriptionId Int
+  amount         Decimal       @db.Decimal(10, 2)
+  method         PaymentMethod
+  trxId          String?
+  paidAt         DateTime
+  note           String?
+  createdAt      DateTime      @default(now())
+
+  school       School       @relation(fields: [schoolId], references: [id])
+  subscription Subscription @relation(fields: [subscriptionId], references: [id])
+
+  @@index([schoolId])
+}
+
+model SmsCreditTransaction {
+  id        Int           @id @default(autoincrement())
+  schoolId  Int
+  type      SmsCreditType
+  credits   Int // positive for purchase, negative for usage
+  amount    Decimal?      @db.Decimal(10, 2) // money paid for a purchase
+  note      String?
+  createdAt DateTime      @default(now())
+
+  school School @relation(fields: [schoolId], references: [id])
+
+  @@index([schoolId, createdAt])
+}
+
+// Per-school sequences: studentCode, receiptNo ... (update inside a transaction)
+model SchoolCounter {
+  id       Int    @id @default(autoincrement())
+  schoolId Int
+  key      String // e.g. "student:2026", "receipt"
+  value    Int    @default(0)
+
+  school School @relation(fields: [schoolId], references: [id])
+
+  @@unique([schoolId, key])
+}
+
+// ─────────────────────────────── Auth ────────────────────────────────
+
+model User {
+  id                 Int       @id @default(autoincrement())
+  schoolId           Int? // null only for SUPER_ADMIN
+  email              String?
+  phone              String?
+  username           String? // student login = studentCode
+  passwordHash       String? // guardians may use OTP only
+  isActive           Boolean   @default(true)
+  mustChangePassword Boolean   @default(false)
+  failedLoginCount   Int       @default(0)
+  lockedUntil        DateTime?
+  locale             String?
+  lastLoginAt        DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  school   School?    @relation(fields: [schoolId], references: [id])
+  roles    UserRole[]
+  staff    Staff?
+  student  Student?
+  guardian Guardian?
+
+  attendancesTaken  Attendance[]      @relation("AttendanceTakenBy")
+  paymentsCollected Payment[]         @relation("PaymentCollectedBy")
+  paymentsVoided    Payment[]         @relation("PaymentVoidedBy")
+  discountsApproved StudentDiscount[]
+  marksEntered      Mark[]
+  expenses          Expense[]
+  notices           Notice[]
+  resultsPublished  ResultBatch[]
+  auditLogs         AuditLog[]
+
+  @@unique([schoolId, email])
+  @@unique([schoolId, phone])
+  @@unique([schoolId, username])
+}
+
+model UserRole {
+  id     Int  @id @default(autoincrement())
+  userId Int
+  role   Role
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, role])
+}
+
+model OtpCode {
+  id        Int       @id @default(autoincrement())
+  schoolId  Int
+  phone     String
+  codeHash  String
+  expiresAt DateTime
+  attempts  Int       @default(0)
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  school School @relation(fields: [schoolId], references: [id])
+
+  @@index([schoolId, phone, createdAt])
+}
+
+// ───────────────────────── Academic setup ────────────────────────────
+
+model AcademicSession {
+  id        Int         @id @default(autoincrement())
+  schoolId  Int
+  name      String // "2026" or "2026-27"
+  type      SessionType @default(SCHOOL)
+  startDate DateTime    @db.Date
+  endDate   DateTime    @db.Date
+  isCurrent Boolean     @default(false) // app ensures one current per (school, type)
+  createdAt DateTime    @default(now())
+
+  school          School                     @relation(fields: [schoolId], references: [id])
+  enrollments     Enrollment[]
+  classTeachers   ClassTeacherAssignment[]
+  subjectTeachers TeacherSubjectAssignment[]
+  routinePeriods  RoutinePeriod[]
+  feeStructures   FeeStructure[]
+  invoices        Invoice[]
+  exams           Exam[]
+  resultConfigs   ResultConfig[]
+  resultBatches   ResultBatch[]
+
+  @@unique([schoolId, type, name])
+}
+
+model SchoolClass {
+  id        Int     @id @default(autoincrement())
+  schoolId  Int
+  nameBn    String // "ষষ্ঠ শ্রেণি"
+  nameEn    String // "Class Six"
+  level     Level
+  order     Int // Play=1 ... Twelve=15; used for promotion
+  hasGroups Boolean @default(false) // true for 9-12
+  isActive  Boolean @default(true)
+
+  school        School         @relation(fields: [schoolId], references: [id])
+  sections      Section[]
+  classSubjects ClassSubject[]
+  enrollments   Enrollment[]
+  feeStructures FeeStructure[]
+  examClasses   ExamClass[]
+  examSubjects  ExamSubject[]
+  resultConfigs ResultConfig[]
+  resultBatches ResultBatch[]
+  notices       Notice[]
+
+  @@unique([schoolId, order])
+}
+
+model Group {
+  id       Int    @id @default(autoincrement())
+  schoolId Int
+  nameBn   String // বিজ্ঞান
+  nameEn   String // Science
+
+  school        School         @relation(fields: [schoolId], references: [id])
+  sections      Section[]
+  classSubjects ClassSubject[]
+  enrollments   Enrollment[]
+  feeStructures FeeStructure[]
+
+  @@unique([schoolId, nameEn])
+}
+
+model Section {
+  id       Int     @id @default(autoincrement())
+  schoolId Int
+  classId  Int
+  groupId  Int?
+  name     String // "ক" / "A"
+  version  Version @default(BANGLA)
+  shift    Shift   @default(MORNING)
+  capacity Int?
+  isActive Boolean @default(true)
+
+  school          School                     @relation(fields: [schoolId], references: [id])
+  class           SchoolClass                @relation(fields: [classId], references: [id])
+  group           Group?                     @relation(fields: [groupId], references: [id])
+  enrollments     Enrollment[]
+  classTeachers   ClassTeacherAssignment[]
+  subjectTeachers TeacherSubjectAssignment[]
+  routinePeriods  RoutinePeriod[]
+  notices         Notice[]
+
+  @@unique([classId, name, version, shift])
+  @@index([schoolId])
+}
+
+model Subject {
+  id         Int       @id @default(autoincrement())
+  schoolId   Int
+  nameBn     String
+  nameEn     String
+  code       String // board subject code, e.g. "101"
+  isCombined Boolean   @default(false) // e.g. "Bangla" = 1st + 2nd paper
+  paperOfId  Int? // paper subject points to its combined parent
+  religion   Religion? // set for religion subjects
+  isActive   Boolean   @default(true)
+
+  school          School                     @relation(fields: [schoolId], references: [id])
+  paperOf         Subject?                   @relation("SubjectPapers", fields: [paperOfId], references: [id])
+  papers          Subject[]                  @relation("SubjectPapers")
+  classSubjects   ClassSubject[]
+  optionalFor     Enrollment[]               @relation("OptionalSubject")
+  subjectTeachers TeacherSubjectAssignment[]
+  routinePeriods  RoutinePeriod[]
+  examSubjects    ExamSubject[]
+
+  @@unique([schoolId, code])
+}
+
+// Which subject is taught in which class (and group), with default marks split
+model ClassSubject {
+  id            Int         @id @default(autoincrement())
+  classId       Int
+  subjectId     Int
+  groupId       Int? // null = all groups / no group
+  type          SubjectType @default(COMPULSORY)
+  writtenFull   Int         @default(0)
+  writtenPass   Int         @default(0)
+  mcqFull       Int         @default(0)
+  mcqPass       Int         @default(0)
+  practicalFull Int         @default(0)
+  practicalPass Int         @default(0)
+  sortOrder     Int         @default(0)
+
+  class   SchoolClass @relation(fields: [classId], references: [id])
+  subject Subject     @relation(fields: [subjectId], references: [id])
+  group   Group?      @relation(fields: [groupId], references: [id])
+
+  @@unique([classId, subjectId, groupId])
+}
+
+model Holiday {
+  id       Int      @id @default(autoincrement())
+  schoolId Int
+  date     DateTime @db.Date
+  title    String
+
+  school School @relation(fields: [schoolId], references: [id])
+
+  @@unique([schoolId, date])
+}
+
+// ───────────────────────── Students & guardians ──────────────────────
+
+model Student {
+  id               Int           @id @default(autoincrement())
+  schoolId         Int
+  userId           Int?          @unique
+  studentCode      String // 2026-0001, unique inside school
+  nameBn           String
+  nameEn           String
+  dateOfBirth      DateTime      @db.Date
+  gender           Gender
+  religion         Religion
+  bloodGroup       BloodGroup?
+  birthRegNo       String?       @db.VarChar(17)
+  photoUrl         String?
+  presentAddress   String?       @db.Text
+  permanentAddress String?       @db.Text
+  previousSchool   String?
+  admissionDate    DateTime      @db.Date
+  status           StudentStatus @default(ACTIVE)
+  leftAt           DateTime?
+  leftReason       String?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  school      School            @relation(fields: [schoolId], references: [id])
+  user        User?             @relation(fields: [userId], references: [id])
+  guardians   StudentGuardian[]
+  enrollments Enrollment[]
+
+  @@unique([schoolId, studentCode])
+  @@unique([schoolId, birthRegNo])
+  @@index([schoolId, nameEn])
+}
+
+model Guardian {
+  id         Int      @id @default(autoincrement())
+  schoolId   Int
+  userId     Int?     @unique
+  name       String
+  phone      String
+  nid        String?
+  occupation String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  school   School            @relation(fields: [schoolId], references: [id])
+  user     User?             @relation(fields: [userId], references: [id])
+  students StudentGuardian[]
+
+  @@unique([schoolId, phone])
+}
+
+model StudentGuardian {
+  id         Int              @id @default(autoincrement())
+  studentId  Int
+  guardianId Int
+  relation   GuardianRelation
+  isPrimary  Boolean          @default(false) // gets SMS and OTP
+
+  student  Student  @relation(fields: [studentId], references: [id])
+  guardian Guardian @relation(fields: [guardianId], references: [id])
+
+  @@unique([studentId, guardianId])
+}
+
+// Per-year data of a student: class, section, roll, group, 4th subject
+model Enrollment {
+  id                Int              @id @default(autoincrement())
+  schoolId          Int
+  studentId         Int
+  sessionId         Int
+  classId           Int // copied from section for fast filtering
+  sectionId         Int
+  groupId           Int?
+  roll              Int
+  optionalSubjectId Int?
+  status            EnrollmentStatus @default(ACTIVE)
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  school          School            @relation(fields: [schoolId], references: [id])
+  student         Student           @relation(fields: [studentId], references: [id])
+  session         AcademicSession   @relation(fields: [sessionId], references: [id])
+  class           SchoolClass       @relation(fields: [classId], references: [id])
+  section         Section           @relation(fields: [sectionId], references: [id])
+  group           Group?            @relation(fields: [groupId], references: [id])
+  optionalSubject Subject?          @relation("OptionalSubject", fields: [optionalSubjectId], references: [id])
+  attendances     Attendance[]
+  discounts       StudentDiscount[]
+  invoices        Invoice[]
+  payments        Payment[]
+  marks           Mark[]
+  results         Result[]
+
+  @@unique([studentId, sessionId])
+  @@unique([sessionId, sectionId, roll])
+  @@index([schoolId, sessionId, classId])
+}
+
+// ─────────────────────────────── Staff ───────────────────────────────
+
+model Staff {
+  id            Int       @id @default(autoincrement())
+  schoolId      Int
+  userId        Int?      @unique
+  nameBn        String?
+  nameEn        String
+  designation   String
+  phone         String
+  email         String?
+  joiningDate   DateTime? @db.Date
+  qualification String?
+  indexNo       String? // MPO index number
+  photoUrl      String?
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  school         School                     @relation(fields: [schoolId], references: [id])
+  user           User?                      @relation(fields: [userId], references: [id])
+  attendances    StaffAttendance[]
+  classTeacherOf ClassTeacherAssignment[]
+  subjectsTaught TeacherSubjectAssignment[]
+  routinePeriods RoutinePeriod[]
+
+  @@unique([schoolId, phone])
+}
+
+model StaffAttendance {
+  id       Int              @id @default(autoincrement())
+  schoolId Int
+  staffId  Int
+  date     DateTime         @db.Date
+  status   AttendanceStatus
+
+  school School @relation(fields: [schoolId], references: [id])
+  staff  Staff  @relation(fields: [staffId], references: [id])
+
+  @@unique([staffId, date])
+  @@index([schoolId, date])
+}
+
+model ClassTeacherAssignment {
+  id        Int @id @default(autoincrement())
+  sessionId Int
+  sectionId Int
+  staffId   Int
+
+  session AcademicSession @relation(fields: [sessionId], references: [id])
+  section Section         @relation(fields: [sectionId], references: [id])
+  staff   Staff           @relation(fields: [staffId], references: [id])
+
+  @@unique([sessionId, sectionId])
+}
+
+model TeacherSubjectAssignment {
+  id        Int @id @default(autoincrement())
+  sessionId Int
+  sectionId Int
+  subjectId Int
+  staffId   Int
+
+  session AcademicSession @relation(fields: [sessionId], references: [id])
+  section Section         @relation(fields: [sectionId], references: [id])
+  subject Subject         @relation(fields: [subjectId], references: [id])
+  staff   Staff           @relation(fields: [staffId], references: [id])
+
+  @@unique([sessionId, sectionId, subjectId])
+  @@index([staffId])
+}
+
+// ──────────────────────── Attendance & routine ───────────────────────
+
+model Attendance {
+  id           Int              @id @default(autoincrement())
+  schoolId     Int
+  enrollmentId Int
+  date         DateTime         @db.Date
+  status       AttendanceStatus
+  takenById    Int
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  school     School     @relation(fields: [schoolId], references: [id])
+  enrollment Enrollment @relation(fields: [enrollmentId], references: [id])
+  takenBy    User       @relation("AttendanceTakenBy", fields: [takenById], references: [id])
+
+  @@unique([enrollmentId, date])
+  @@index([schoolId, date])
+}
+
+model RoutinePeriod {
+  id        Int       @id @default(autoincrement())
+  schoolId  Int
+  sessionId Int
+  sectionId Int
+  day       DayOfWeek
+  periodNo  Int
+  startTime String    @db.VarChar(5) // "08:00"
+  endTime   String    @db.VarChar(5)
+  subjectId Int?
+  staffId   Int?
+  room      String?
+
+  school  School          @relation(fields: [schoolId], references: [id])
+  session AcademicSession @relation(fields: [sessionId], references: [id])
+  section Section         @relation(fields: [sectionId], references: [id])
+  subject Subject?        @relation(fields: [subjectId], references: [id])
+  staff   Staff?          @relation(fields: [staffId], references: [id])
+
+  @@unique([sessionId, sectionId, day, periodNo])
+  @@index([sessionId, staffId, day, periodNo]) // teacher double-booking check
+}
+
+// ─────────────────────────────── Fees ────────────────────────────────
+
+model FeeType {
+  id        Int          @id @default(autoincrement())
+  schoolId  Int
+  nameBn    String
+  nameEn    String
+  frequency FeeFrequency
+  isActive  Boolean      @default(true)
+
+  school      School            @relation(fields: [schoolId], references: [id])
+  structures  FeeStructure[]
+  lateFeeRule LateFeeRule?
+  discounts   StudentDiscount[]
+  invoices    Invoice[]
+
+  @@unique([schoolId, nameEn])
+}
+
+model FeeStructure {
+  id        Int     @id @default(autoincrement())
+  schoolId  Int
+  sessionId Int
+  classId   Int
+  groupId   Int? // null = all groups
+  feeTypeId Int
+  amount    Decimal @db.Decimal(10, 2)
+
+  school  School          @relation(fields: [schoolId], references: [id])
+  session AcademicSession @relation(fields: [sessionId], references: [id])
+  class   SchoolClass     @relation(fields: [classId], references: [id])
+  group   Group?          @relation(fields: [groupId], references: [id])
+  feeType FeeType         @relation(fields: [feeTypeId], references: [id])
+
+  @@unique([sessionId, classId, groupId, feeTypeId])
+  @@index([schoolId])
+}
+
+model LateFeeRule {
+  id        Int         @id @default(autoincrement())
+  schoolId  Int
+  feeTypeId Int         @unique
+  dueDay    Int // day of month the fee is due, e.g. 10
+  type      LateFeeType
+  amount    Decimal     @db.Decimal(10, 2)
+  maxAmount Decimal?    @db.Decimal(10, 2) // cap for PER_DAY / PER_MONTH
+  isActive  Boolean     @default(true)
+
+  school  School  @relation(fields: [schoolId], references: [id])
+  feeType FeeType @relation(fields: [feeTypeId], references: [id])
+}
+
+model StudentDiscount {
+  id           Int          @id @default(autoincrement())
+  schoolId     Int
+  enrollmentId Int
+  feeTypeId    Int? // null = applies to all fee types
+  type         DiscountType
+  value        Decimal      @db.Decimal(10, 2) // percent or taka
+  reason       String
+  approvedById Int
+  isActive     Boolean      @default(true)
+  createdAt    DateTime     @default(now())
+
+  school     School     @relation(fields: [schoolId], references: [id])
+  enrollment Enrollment @relation(fields: [enrollmentId], references: [id])
+  feeType    FeeType?   @relation(fields: [feeTypeId], references: [id])
+  approvedBy User       @relation(fields: [approvedById], references: [id])
+
+  @@index([enrollmentId])
+}
+
+// One invoice = one fee type for one period (month) for one enrollment
+model Invoice {
+  id           Int           @id @default(autoincrement())
+  schoolId     Int
+  enrollmentId Int
+  sessionId    Int
+  feeTypeId    Int
+  periodYear   Int?
+  periodMonth  Int? // 1-12 for monthly fees
+  examId       Int? // for exam fees
+  title        String // "মাসিক বেতন - জানুয়ারি ২০২৬"
+  dueDate      DateTime      @db.Date
+  totalAmount  Decimal       @db.Decimal(10, 2) // sum of lines
+  paidAmount   Decimal       @default(0) @db.Decimal(10, 2)
+  status       InvoiceStatus @default(UNPAID)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  school      School              @relation(fields: [schoolId], references: [id])
+  enrollment  Enrollment          @relation(fields: [enrollmentId], references: [id])
+  session     AcademicSession     @relation(fields: [sessionId], references: [id])
+  feeType     FeeType             @relation(fields: [feeTypeId], references: [id])
+  exam        Exam?               @relation(fields: [examId], references: [id])
+  lines       InvoiceLine[]
+  allocations PaymentAllocation[]
+
+  @@unique([enrollmentId, feeTypeId, periodYear, periodMonth])
+  @@index([schoolId, status, dueDate])
+}
+
+model InvoiceLine {
+  id          Int             @id @default(autoincrement())
+  invoiceId   Int
+  type        InvoiceLineType
+  description String
+  amount      Decimal         @db.Decimal(10, 2) // negative for DISCOUNT / LATE_FEE_WAIVER
+  createdById Int?
+  reason      String?
+  createdAt   DateTime        @default(now())
+
+  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@index([invoiceId])
+}
+
+// A payment = one money receipt
+model Payment {
+  id            Int           @id @default(autoincrement())
+  schoolId      Int
+  receiptNo     String // unique inside school
+  enrollmentId  Int
+  amount        Decimal       @db.Decimal(10, 2)
+  method        PaymentMethod
+  trxId         String?
+  paidAt        DateTime
+  collectedById Int
+  status        PaymentStatus @default(VALID)
+  voidReason    String?
+  voidedById    Int?
+  voidedAt      DateTime?
+  createdAt     DateTime      @default(now())
+
+  school      School              @relation(fields: [schoolId], references: [id])
+  enrollment  Enrollment          @relation(fields: [enrollmentId], references: [id])
+  collectedBy User                @relation("PaymentCollectedBy", fields: [collectedById], references: [id])
+  voidedBy    User?               @relation("PaymentVoidedBy", fields: [voidedById], references: [id])
+  allocations PaymentAllocation[]
+
+  @@unique([schoolId, receiptNo])
+  @@index([schoolId, paidAt])
+}
+
+// How a payment was split across invoices (late fee first, oldest first)
+model PaymentAllocation {
+  id        Int     @id @default(autoincrement())
+  paymentId Int
+  invoiceId Int
+  amount    Decimal @db.Decimal(10, 2)
+
+  payment Payment @relation(fields: [paymentId], references: [id])
+  invoice Invoice @relation(fields: [invoiceId], references: [id])
+
+  @@index([invoiceId])
+}
+
+model Expense {
+  id          Int      @id @default(autoincrement())
+  schoolId    Int
+  category    String
+  description String?
+  amount      Decimal  @db.Decimal(10, 2)
+  date        DateTime @db.Date
+  createdById Int
+  createdAt   DateTime @default(now())
+
+  school    School @relation(fields: [schoolId], references: [id])
+  createdBy User   @relation(fields: [createdById], references: [id])
+
+  @@index([schoolId, date])
+}
+
+// ────────────────────────── Exams & results ──────────────────────────
+
+model GradeScale {
+  id        Int     @id @default(autoincrement())
+  schoolId  Int
+  name      String // "Bangladesh 5.00"
+  level     Level? // null = default for all levels
+  isDefault Boolean @default(false)
+
+  school        School           @relation(fields: [schoolId], references: [id])
+  items         GradeScaleItem[]
+  resultConfigs ResultConfig[]
+}
+
+model GradeScaleItem {
+  id           Int     @id @default(autoincrement())
+  gradeScaleId Int
+  minPercent   Decimal @db.Decimal(5, 2)
+  maxPercent   Decimal @db.Decimal(5, 2)
+  letter       String  @db.VarChar(3) // A+, A, A-, B, C, D, F
+  point        Decimal @db.Decimal(3, 2)
+  isFail       Boolean @default(false)
+
+  gradeScale GradeScale @relation(fields: [gradeScaleId], references: [id], onDelete: Cascade)
+
+  @@index([gradeScaleId])
+}
+
+model Exam {
+  id          Int       @id @default(autoincrement())
+  schoolId    Int
+  sessionId   Int
+  name        String
+  type        ExamType
+  startDate   DateTime? @db.Date
+  endDate     DateTime? @db.Date
+  marksLocked Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+
+  school        School               @relation(fields: [schoolId], references: [id])
+  session       AcademicSession      @relation(fields: [sessionId], references: [id])
+  classes       ExamClass[]
+  subjects      ExamSubject[]
+  invoices      Invoice[]
+  weights       ResultConfigWeight[]
+  finalOf       ResultConfig[]       @relation("FinalExam")
+  resultBatches ResultBatch[]
+
+  @@index([schoolId, sessionId])
+}
+
+model ExamClass {
+  id      Int @id @default(autoincrement())
+  examId  Int
+  classId Int
+
+  exam  Exam        @relation(fields: [examId], references: [id], onDelete: Cascade)
+  class SchoolClass @relation(fields: [classId], references: [id])
+
+  @@unique([examId, classId])
+}
+
+// Marks split for one subject of one class in one exam (copied from ClassSubject)
+model ExamSubject {
+  id            Int       @id @default(autoincrement())
+  examId        Int
+  classId       Int
+  subjectId     Int
+  examDate      DateTime? @db.Date
+  writtenFull   Int       @default(0)
+  writtenPass   Int       @default(0)
+  mcqFull       Int       @default(0)
+  mcqPass       Int       @default(0)
+  practicalFull Int       @default(0)
+  practicalPass Int       @default(0)
+
+  exam    Exam        @relation(fields: [examId], references: [id], onDelete: Cascade)
+  class   SchoolClass @relation(fields: [classId], references: [id])
+  subject Subject     @relation(fields: [subjectId], references: [id])
+  marks   Mark[]
+
+  @@unique([examId, classId, subjectId])
+}
+
+model Mark {
+  id            Int      @id @default(autoincrement())
+  schoolId      Int
+  examSubjectId Int
+  enrollmentId  Int
+  written       Decimal? @db.Decimal(5, 2)
+  mcq           Decimal? @db.Decimal(5, 2)
+  practical     Decimal? @db.Decimal(5, 2)
+  isAbsent      Boolean  @default(false)
+  enteredById   Int
+  updatedAt     DateTime @updatedAt
+
+  school      School      @relation(fields: [schoolId], references: [id])
+  examSubject ExamSubject @relation(fields: [examSubjectId], references: [id])
+  enrollment  Enrollment  @relation(fields: [enrollmentId], references: [id])
+  enteredBy   User        @relation(fields: [enteredById], references: [id])
+
+  @@unique([examSubjectId, enrollmentId])
+  @@index([schoolId])
+}
+
+// How the year-end result of a class is calculated
+model ResultConfig {
+  id           Int          @id @default(autoincrement())
+  schoolId     Int
+  sessionId    Int
+  classId      Int
+  method       ResultMethod @default(FINAL_ONLY)
+  finalExamId  Int? // used when method = FINAL_ONLY
+  gradeScaleId Int
+
+  school     School               @relation(fields: [schoolId], references: [id])
+  session    AcademicSession      @relation(fields: [sessionId], references: [id])
+  class      SchoolClass          @relation(fields: [classId], references: [id])
+  finalExam  Exam?                @relation("FinalExam", fields: [finalExamId], references: [id])
+  gradeScale GradeScale           @relation(fields: [gradeScaleId], references: [id])
+  weights    ResultConfigWeight[] // used when method = WEIGHTED, sum must be 100
+
+  @@unique([sessionId, classId])
+}
+
+model ResultConfigWeight {
+  id             Int     @id @default(autoincrement())
+  resultConfigId Int
+  examId         Int
+  weightPercent  Decimal @db.Decimal(5, 2)
+
+  resultConfig ResultConfig @relation(fields: [resultConfigId], references: [id], onDelete: Cascade)
+  exam         Exam         @relation(fields: [examId], references: [id])
+
+  @@unique([resultConfigId, examId])
+}
+
+// One processing/publishing run for a class
+model ResultBatch {
+  id            Int               @id @default(autoincrement())
+  schoolId      Int
+  sessionId     Int
+  classId       Int
+  kind          ResultKind
+  examId        Int? // set when kind = EXAM
+  status        ResultBatchStatus @default(DRAFT)
+  processedAt   DateTime?
+  publishedAt   DateTime?
+  publishedById Int?
+
+  school      School          @relation(fields: [schoolId], references: [id])
+  session     AcademicSession @relation(fields: [sessionId], references: [id])
+  class       SchoolClass     @relation(fields: [classId], references: [id])
+  exam        Exam?           @relation(fields: [examId], references: [id])
+  publishedBy User?           @relation(fields: [publishedById], references: [id])
+  results     Result[]
+
+  @@index([schoolId, sessionId, classId])
+}
+
+// Frozen result of one student; `details` keeps subject-wise marks and grades
+model Result {
+  id             Int     @id @default(autoincrement())
+  schoolId       Int
+  batchId        Int
+  enrollmentId   Int
+  totalMarks     Decimal @db.Decimal(7, 2)
+  gpa            Decimal @db.Decimal(3, 2)
+  letterGrade    String  @db.VarChar(3)
+  isPassed       Boolean
+  failedSubjects Int     @default(0)
+  meritPosition  Int?
+  details        Json
+
+  school     School      @relation(fields: [schoolId], references: [id])
+  batch      ResultBatch @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  enrollment Enrollment  @relation(fields: [enrollmentId], references: [id])
+
+  @@unique([batchId, enrollmentId])
+  @@index([schoolId])
+}
+
+// ─────────────────────────── Notices & SMS ───────────────────────────
+
+model Notice {
+  id            Int            @id @default(autoincrement())
+  schoolId      Int
+  title         String
+  body          String         @db.Text
+  audience      NoticeAudience @default(ALL)
+  classId       Int?
+  sectionId     Int?
+  attachmentUrl String?
+  publishedAt   DateTime?
+  createdById   Int
+  createdAt     DateTime       @default(now())
+
+  school    School       @relation(fields: [schoolId], references: [id])
+  class     SchoolClass? @relation(fields: [classId], references: [id])
+  section   Section?     @relation(fields: [sectionId], references: [id])
+  createdBy User         @relation(fields: [createdById], references: [id])
+
+  @@index([schoolId, publishedAt])
+}
+
+// The SMS provider a school selected and saved; the active one is used
+model SmsProviderConfig {
+  id          Int      @id @default(autoincrement())
+  schoolId    Int
+  providerKey String // key of a supported provider adapter in code
+  apiUrl      String?
+  apiKeyEnc   String   @db.Text // encrypted, never stored in plain text
+  senderId    String?
+  isMasking   Boolean  @default(false)
+  isActive    Boolean  @default(true) // app keeps only one active per school
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  school   School       @relation(fields: [schoolId], references: [id])
+  messages SmsMessage[]
+
+  @@index([schoolId, isActive])
+}
+
+// An Android phone running the gateway app for a school
+model SmsGatewayDevice {
+  id            Int       @id @default(autoincrement())
+  schoolId      Int
+  name          String
+  tokenHash     String    @unique
+  ratePerMinute Int       @default(10)
+  lastSeenAt    DateTime?
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+
+  school   School       @relation(fields: [schoolId], references: [id])
+  messages SmsMessage[]
+
+  @@index([schoolId])
+}
+
+model SmsTemplate {
+  id       Int    @id @default(autoincrement())
+  schoolId Int
+  key      String // "ABSENT", "RECEIPT", ...
+  bodyBn   String @db.Text
+  bodyEn   String @db.Text
+
+  school School @relation(fields: [schoolId], references: [id])
+
+  @@unique([schoolId, key])
+}
+
+model SmsMessage {
+  id               Int        @id @default(autoincrement())
+  schoolId         Int
+  to               String     @db.VarChar(20)
+  body             String     @db.Text
+  parts            Int        @default(1)
+  purpose          SmsPurpose
+  driver           SmsDriver?
+  providerConfigId Int?
+  deviceId         Int?
+  status           SmsStatus  @default(QUEUED)
+  attempts         Int        @default(0)
+  externalId       String?
+  error            String?    @db.Text
+  createdAt        DateTime   @default(now())
+  sentAt           DateTime?
+  deliveredAt      DateTime?
+
+  school         School             @relation(fields: [schoolId], references: [id])
+  providerConfig SmsProviderConfig? @relation(fields: [providerConfigId], references: [id])
+  device         SmsGatewayDevice?  @relation(fields: [deviceId], references: [id])
+
+  @@index([status, createdAt])
+  @@index([schoolId, createdAt])
+  @@index([deviceId, status])
+}
+
+// ─────────────────────────────── Audit ───────────────────────────────
+
+model AuditLog {
+  id        Int      @id @default(autoincrement())
+  schoolId  Int?
+  userId    Int?
+  action    String // "UPDATE", "VOID", "WAIVE", ...
+  entity    String // "Mark", "Payment", ...
+  entityId  String
+  before    Json?
+  after     Json?
+  ip        String?
+  createdAt DateTime @default(now())
+
+  school School? @relation(fields: [schoolId], references: [id])
+  user   User?   @relation(fields: [userId], references: [id])
+
+  @@index([schoolId, entity, entityId])
+  @@index([schoolId, createdAt])
+}
