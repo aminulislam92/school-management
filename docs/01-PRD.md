@@ -1,7 +1,7 @@
 # 01-PRD — School Management System (Bangladesh)
 
 > Version: 0.4 · Date: 2026-10-31
-> Stack: Next.js (App Router), TypeScript, MySQL 8, Prisma, Tailwind + shadcn/ui, Auth.js
+> Stack: Next.js (App Router), TypeScript, MySQL 8, Prisma, Tailwind + shadcn/ui, jose (session)
 > ধরন: মাল্টি-স্কুল SaaS (একটা সিস্টেম, অনেক স্কুল)
 
 ---
@@ -345,6 +345,7 @@
 | ১০ | হোস্টিং কি বছর বছর বদলানো যাবে? | হ্যাঁ। অ্যাপ Docker-এ চলবে; স্কুলের নিজস্ব ডোমেইন সার্ভারের IP-তে নয়, আমাদের ডোমেইনের একটা নামে (যেমন `schools.yourapp.com`) CNAME করবে, যাতে সার্ভার বদলালে শুধু আমাদের DNS-এ একটা রেকর্ড বদলাতে হয় |
 | ১১ | কোথায় হোস্ট হবে? | VPS (Ubuntu, Docker)। cPanel শেয়ার্ড হোস্টিং নয়: Node অ্যাপের RAM/প্রসেস সীমা, সার্ভারে PDF (Chromium) চালানো যায় না, wildcard সাবডোমেইন ও নিজস্ব ডোমেইন স্বয়ংক্রিয় করা কঠিন |
 | ১২ | স্কুলের নিজস্ব ডোমেইনের DNS কে নিয়ন্ত্রণ করবে? | ডেভেলপার নিজে (সব ডোমেইনের DNS একই Cloudflare অ্যাকাউন্টে); স্কুলকে DNS বদলাতে হবে না, আলাদা মালিকানা-যাচাই লাগবে না |
+| ১৩ | লগইন কোন লাইব্রেরি দিয়ে? | Auth.js নয় (v5 এখনো beta); Next.js ডকসের পদ্ধতিতে `jose` দিয়ে সাইন করা সেশন কুকি। কুকি এক হোস্টে বাঁধা, প্রতি রিকোয়েস্টে ইউজার ডাটাবেস থেকে যাচাই |
 
 ## 8. খোলা প্রশ্ন
 

@@ -10,7 +10,7 @@ The developer is learning Next.js: after each change, explain briefly in Bangla 
 - MySQL 8 (utf8mb4) + Prisma 6 — do not upgrade Prisma to 7+ without a plan (datasource URL moves to prisma.config.ts)
 - Tailwind CSS 4 + shadcn/ui (base-nova style, `cn` from the `cn` package)
 - next-intl (Bangla default, English; locale in a cookie, not the URL)
-- Auth.js (planned, Phase 1), zod for validation, bcryptjs for passwords
+- Auth: own signed-cookie session with `jose` (Next.js docs pattern), not Auth.js. zod for validation, bcryptjs for passwords
 - Vitest for unit tests
 
 ## Commands
@@ -30,6 +30,7 @@ The developer is learning Next.js: after each change, explain briefly in Bangla 
 - New Prisma model: give it `schoolId`, or add it to `CHILD_MODELS`/`GLOBAL_MODELS` in `src/server/db/tenant-scope.ts` — `npm test` fails until you do.
 - `sdb` does not check ids inside nested writes (`connect`, nested `create`): when an action receives foreign ids (sectionId, subjectId ...), load them through `sdb` first. No raw SQL with school data.
 - Run `npm run test:db` (needs local MySQL) after touching `school-db.ts` or `tenant-scope.ts`.
+- Auth: every protected page/action starts with `await requireUser([roles])` from `src/server/auth/dal.ts` (proxy.ts only checks that a cookie exists). The session cookie is bound to one host; `getSession()` also checks it belongs to the current school.
 - Check role/permission on the server in every action, not only in the UI.
 - Never trust `schoolId` from the client; take it from the session and the subdomain.
 - Money is `Decimal` (`@db.Decimal(10,2)`), never Float. Use string/Decimal math, not JS floats.

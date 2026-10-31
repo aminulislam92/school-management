@@ -70,7 +70,7 @@ src/
 | `changePassword(old, new)` | পাসওয়ার্ড বদল, `mustChangePassword = false` |
 | `requestPasswordReset(identifier)` / `resetPassword(token, new)` | পাসওয়ার্ড রিসেট |
 
-লগইন নিজে Auth.js-এর Credentials provider দিয়ে (`/api/auth/[...nextauth]`)। ৫ বার ভুলে ১৫ মিনিট লক।
+লগইন ও লগআউট Server Action দিয়ে (`loginAction`, `logoutAction` — `src/server/auth/actions.ts`); সেশন `jose` দিয়ে সাইন করা কুকি। ৫ বার ভুলে ১৫ মিনিট লক।
 
 ---
 
@@ -252,7 +252,6 @@ Actions: `switchChild(studentId)` — বাকি সব শুধু পড়
 
 | রুট | মেথড | কে কল করে | সুরক্ষা | কাজ |
 | --- | --- | --- | --- | --- |
-| `/api/auth/[...nextauth]` | GET, POST | ব্রাউজার | Auth.js | লগইন/লগআউট |
 | `/api/files/upload` | POST | ব্রাউজার | লগইন + রোল | ছবি/সংযুক্তি আপলোড |
 | `/api/files/[...key]` | GET | ব্রাউজার | লগইন + signed URL | ফাইল দেখা |
 | `/api/pdf/receipt/[paymentId]` | GET | ব্রাউজার | লগইন + মালিকানা | রিসিট PDF |

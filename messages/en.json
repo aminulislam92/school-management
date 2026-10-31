@@ -7,7 +7,8 @@
     "title": "Welcome",
     "today": "Today",
     "mainSite": "Main site: super admin and product info",
-    "schoolSite": "School site"
+    "schoolSite": "School site",
+    "welcomeUser": "Welcome, {name}"
   },
   "common": {
     "save": "Save",
@@ -21,5 +22,37 @@
     "title": "Not found",
     "description": "There is no school or page at this address. Please check the address.",
     "back": "Go to home page"
+  },
+  "auth": {
+    "identifier": "Email, mobile number or Student ID",
+    "identifierPlaceholder": "e.g. 01712345678",
+    "password": "Password",
+    "signIn": "Sign in",
+    "signingIn": "Signing in...",
+    "signOut": "Sign out",
+    "superAdminLogin": "Super admin sign in",
+    "schoolLogin": "Teacher, staff and student sign in",
+    "errors": {
+      "required": "Enter your email/mobile/Student ID and password.",
+      "invalid": "Those sign-in details are not correct.",
+      "locked": "Too many wrong passwords. Try again in {minutes} minutes.",
+      "inactive": "This account is switched off. Please contact the school office.",
+      "noSchool": "No school was found at this address."
+    }
+  },
+  "areas": {
+    "super": "Super admin panel (in progress)",
+    "admin": "School panel (in progress)",
+    "portal": "Student and guardian portal (in progress)"
+  },
+  "roles": {
+    "SUPER_ADMIN": "Super admin",
+    "ADMIN": "Admin",
+    "OFFICE_STAFF": "Office staff",
+    "ACCOUNTANT": "Accountant",
+    "TEACHER": "Teacher",
+    "CLASS_TEACHER": "Class teacher",
+    "STUDENT": "Student",
+    "GUARDIAN": "Guardian"
   }
 }

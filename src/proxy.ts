@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { resolveTenantHost, TENANT_KIND_HEADER, TENANT_VALUE_HEADER } from "@/lib/tenant-host";
+import { SESSION_COOKIE } from "@/server/auth/session-token";
 
 // Runs before every request: works out the school from the Host header and
 // passes it to the app in request headers. Those headers are always
@@ -8,6 +9,7 @@ import { resolveTenantHost, TENANT_KIND_HEADER, TENANT_VALUE_HEADER } from "@/li
 // Paths that only exist on one side.
 const ROOT_ONLY = ["/super"];
 const SCHOOL_ONLY = ["/admin", "/portal"];
+const PROTECTED = ["/super", "/admin", "/portal"];
 
 function startsWithAny(path: string, prefixes: string[]) {
   return prefixes.some((p) => path === p || path.startsWith(`${p}/`));
@@ -24,6 +26,12 @@ export function proxy(request: NextRequest) {
   const isRoot = tenant.kind === "root";
   if ((isRoot && startsWithAny(path, SCHOOL_ONLY)) || (!isRoot && startsWithAny(path, ROOT_ONLY))) {
     return new NextResponse("Not found", { status: 404 });
+  }
+
+  // Quick check only: no cookie → login page. The real check (valid token,
+  // right school, active user, right role) happens in requireUser().
+  if (startsWithAny(path, PROTECTED) && !request.cookies.has(SESSION_COOKIE)) {
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
   const headers = new Headers(request.headers);
