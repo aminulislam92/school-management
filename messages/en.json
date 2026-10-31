@@ -507,5 +507,57 @@
     "label": "Settings",
     "school": "School profile",
     "general": "General"
+  },
+  "sessions": {
+    "title": "Academic sessions",
+    "hint": "Admissions, attendance, exams and fees all belong to a session. Each type has one \"current\" session.",
+    "types": {
+      "SCHOOL": "School sessions (Play–10)",
+      "COLLEGE": "College sessions (11–12)"
+    },
+    "typeHints": {
+      "SCHOOL": "Usually January–December, named like \"2027\".",
+      "COLLEGE": "Dates set by the school, named like \"2026-27\"."
+    },
+    "fields": {
+      "type": "Type",
+      "name": "Name",
+      "startDate": "Start",
+      "endDate": "End"
+    },
+    "period": "Period",
+    "students": "Students",
+    "current": "Current",
+    "makeCurrent": "Make current",
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirmDelete": "Yes, delete",
+    "cancel": "Cancel",
+    "empty": "No sessions yet.",
+    "new": "New session",
+    "create": "Create session",
+    "save": "Save",
+    "saving": "Saving...",
+    "saved": "Session created.",
+    "editTitle": "Edit session",
+    "currentNote": "Changing the current session sends new admissions, attendance and fees to that session. Older sessions keep all their data. A session that has data can't be deleted.",
+    "errors": {
+      "type": "Pick a type.",
+      "noCollege": "This school has no higher secondary level, so it can't have college sessions.",
+      "typeLocked": "A session's type can't change after it is created.",
+      "name": "Name must be 2 to 20 characters.",
+      "nameTaken": "Another session of this type has this name.",
+      "date": "Enter a valid date.",
+      "endBeforeStart": "The end date must be after the start date.",
+      "tooLong": "A session can't be longer than 2 years.",
+      "overlap": "These dates overlap the \"{name}\" session.",
+      "notFound": "Session not found.",
+      "deleteCurrent": "The current session can't be deleted.",
+      "deleteInUse": "This session has data, so it can't be deleted."
+    }
+  },
+  "academicTabs": {
+    "label": "Academic setup",
+    "sessions": "Sessions"
   }
 }

@@ -2,22 +2,17 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useTranslations } from "next-intl";
 import { cn } from "cn";
 
-// More tabs (SMS, grade scales, late fees) are added as their tasks are done.
-const TABS = [
-  { href: "/admin/settings/school", key: "school" },
-  { href: "/admin/settings/general", key: "general" },
-] as const;
+export type SectionTab = { href: string; label: string };
 
-export function SettingsTabs() {
-  const t = useTranslations("settingsTabs");
+/** Tabs under a menu item (Settings, Academic setup ...). A tab is active on its page and pages below it. */
+export function SectionTabs({ tabs, label }: { tabs: SectionTab[]; label: string }) {
   const pathname = usePathname();
   return (
-    <nav aria-label={t("label")} className="flex gap-1 overflow-x-auto border-b">
-      {TABS.map((tab) => {
-        const active = pathname === tab.href;
+    <nav aria-label={label} className="flex gap-1 overflow-x-auto border-b">
+      {tabs.map((tab) => {
+        const active = pathname === tab.href || pathname.startsWith(`${tab.href}/`);
         return (
           <Link
             key={tab.href}
@@ -28,7 +23,7 @@ export function SettingsTabs() {
               active ? "border-primary font-medium" : "border-transparent text-muted-foreground hover:text-foreground",
             )}
           >
-            {t(tab.key)}
+            {tab.label}
           </Link>
         );
       })}

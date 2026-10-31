@@ -35,3 +35,11 @@ describe("dates (Asia/Dhaka)", () => {
     expect(periodEnd("2027-01-31", "MONTHLY")).toBe("2027-02-27"); // next period starts 28 Feb
   });
 });
+
+describe("date-only columns", () => {
+  it("round-trips a calendar day through UTC midnight", async () => {
+    const { dateOnly, ymdOf } = await import("./dates");
+    expect(dateOnly("2026-07-01").toISOString()).toBe("2026-07-01T00:00:00.000Z");
+    expect(ymdOf(dateOnly("2027-06-30"))).toBe("2027-06-30");
+  });
+});

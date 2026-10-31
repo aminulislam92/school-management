@@ -45,3 +45,13 @@ export function addMonths(ymd: string, months: number): string {
 export function periodEnd(startYmd: string, cycle: "MONTHLY" | "YEARLY"): string {
   return addDays(addMonths(startYmd, cycle === "MONTHLY" ? 1 : 12), -1);
 }
+
+// ── Date-only columns (`@db.Date`, e.g. session start/end, date of birth) ──
+// The database keeps just the calendar day. Prisma reads and writes them as
+// UTC midnight, so we convert with UTC (not Dhaka time) to keep the same day.
+
+/** "2026-01-01" → the Date Prisma expects for a @db.Date column. */
+export const dateOnly = (ymd: string) => new Date(`${ymd}T00:00:00.000Z`);
+
+/** A @db.Date value from Prisma → "2026-01-01". */
+export const ymdOf = (date: Date) => date.toISOString().slice(0, 10);

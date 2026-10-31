@@ -32,7 +32,7 @@ export const NAV: NavGroup[] = [
   {
     key: "setup",
     items: [
-      { key: "academic", href: "/admin/academic/sessions", icon: "academic", permission: "academic.manage", ready: false },
+      { key: "academic", href: "/admin/academic", icon: "academic", permission: "academic.manage", ready: true },
       { key: "feeSetup", href: "/admin/fees/types", icon: "feeSetup", permission: "fee.setup", ready: false },
       { key: "staff", href: "/admin/staff", icon: "staff", permission: "staff.manage", ready: false },
       { key: "users", href: "/admin/users", icon: "users", permission: "user.manage", ready: false },
