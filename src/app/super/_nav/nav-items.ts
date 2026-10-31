@@ -12,7 +12,7 @@ export const SUPER_NAV: NavGroup[] = [
     items: [
       { key: "schools", href: "/super/schools", icon: "schools", permission: "super.manage", ready: true },
       { key: "plans", href: "/super/plans", icon: "plans", permission: "super.manage", ready: true },
-      { key: "subscriptions", href: "/super/subscriptions", icon: "subscriptions", permission: "super.manage", ready: false }, // T1.13
+      { key: "subscriptions", href: "/super/subscriptions", icon: "subscriptions", permission: "super.manage", ready: true },
     ],
   },
 ];

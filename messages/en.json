@@ -322,7 +322,6 @@
     "noSubscriptions": "No subscriptions.",
     "period": "Period",
     "paid": "Paid",
-    "paymentsLater": "New subscriptions and payment entry come in the next step (T1.13).",
     "changeStatus": "School status",
     "current": "now",
     "reason": "Reason",
@@ -347,5 +346,60 @@
       "OTHER": "Change"
     },
     "noHistory": "No changes yet."
+  },
+  "subs": {
+    "plan": "Plan",
+    "kind": "Type",
+    "kinds": {
+      "ACTIVE": "Paid (active)",
+      "TRIAL": "Trial"
+    },
+    "startsOn": "Start date",
+    "endsOn": "End date",
+    "note": "Note",
+    "subNotePlaceholder": "e.g. yearly renewal for 2027",
+    "overlapHint": "If an older subscription is still running, it ends when this one starts. The end date follows the plan; you can change it.",
+    "newSubscription": "New subscription / renewal",
+    "createSub": "Add subscription",
+    "saving": "Saving...",
+    "subSaved": "Subscription added.",
+    "payment": "Payment entry",
+    "forSubscription": "For subscription",
+    "amount": "Amount",
+    "paidOn": "Payment date",
+    "method": "Method",
+    "trxId": "Transaction ID (TrxID)",
+    "recordPayment": "Save payment",
+    "paySaved": "Payment saved.",
+    "noSubForPayment": "Add a subscription before taking a payment.",
+    "methods": {
+      "BKASH": "bKash",
+      "NAGAD": "Nagad",
+      "ROCKET": "Rocket",
+      "BANK": "Bank",
+      "CASH": "Cash",
+      "OTHER": "Other"
+    },
+    "watchTitle": "Subscriptions",
+    "watchHint": "Schools whose subscription ends within {days, number} days, has ended, or is missing.",
+    "watchEmpty": "No school's subscription ends soon.",
+    "daysLeft": "Left",
+    "daysLeftValue": "{days, number} days",
+    "expired": "Expired",
+    "noSub": "No subscription",
+    "errors": {
+      "plan": "Pick an active plan.",
+      "status": "Pick a type.",
+      "date": "Enter a valid date.",
+      "endBeforeStart": "The end date can't be before the start date.",
+      "note": "The note is too long.",
+      "notFound": "School not found.",
+      "subscription": "Pick a subscription.",
+      "amount": "Enter a valid amount, e.g. 1500 or 1500.50.",
+      "method": "Pick a method.",
+      "trxId": "TrxID is too long.",
+      "trxIdRequired": "bKash/Nagad/Rocket/Bank payments need a TrxID.",
+      "future": "A payment can't be dated in the future."
+    }
   }
 }

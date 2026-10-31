@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import { Fragment, Suspense } from "react";
 import { headers } from "next/headers";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -10,7 +10,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { requirePermission } from "@/server/auth/dal";
-import { getSchoolDetail } from "@/server/super/schools";
+import { getSchoolDetail, listActivePlans } from "@/server/super/schools";
+import { nextSubscriptionDefaults } from "@/server/super/subscriptions";
+import { PaymentForm } from "./payment-form";
+import { SubscriptionForm } from "./subscription-form";
 import { SchoolStatusBadge } from "../school-status-badge";
 import { StatusForm } from "./status-form";
 
@@ -30,7 +33,13 @@ async function SchoolDetail({ params }: { params: Params }) {
   const school = Number.isInteger(id) && id > 0 ? await getSchoolDetail(id) : null;
   if (!school) notFound();
 
-  const t = await getTranslations("schools");
+  const [t, ts, tp, plans, next] = await Promise.all([
+    getTranslations("schools"),
+    getTranslations("subs"),
+    getTranslations("plans"),
+    listActivePlans(),
+    nextSubscriptionDefaults(school.id),
+  ]);
   const format = await getFormatter();
   const date = (d: Date) => format.dateTime(d, { dateStyle: "medium" });
   const taka = (n: number | string) => format.number(Number(n), { style: "currency", currency: "BDT" });
@@ -147,20 +156,68 @@ async function SchoolDetail({ params }: { params: Params }) {
                     </TableHeader>
                     <TableBody>
                       {school.subscriptions.map((s) => (
-                        <TableRow key={s.id}>
-                          <TableCell>{s.plan.name}</TableCell>
-                          <TableCell>{t(`subStatus.${s.status}`)}</TableCell>
-                          <TableCell className="text-sm">
-                            {date(s.startsAt)} – {date(s.endsAt)}
-                          </TableCell>
-                          <TableCell className="text-right tabular-nums">{taka(s.paid.toString())}</TableCell>
-                        </TableRow>
+                        <Fragment key={s.id}>
+                          <TableRow className={s.status === "CANCELLED" ? "text-muted-foreground" : undefined}>
+                            <TableCell>{s.plan.name}</TableCell>
+                            <TableCell>{t(`subStatus.${s.status}`)}</TableCell>
+                            <TableCell className="text-sm">
+                              {date(s.startsAt)} – {date(s.endsAt)}
+                            </TableCell>
+                            <TableCell className="text-right tabular-nums">{taka(s.paid.toString())}</TableCell>
+                          </TableRow>
+                          {s.payments.map((p) => (
+                            <TableRow key={`p${p.id}`} className="border-0 text-xs text-muted-foreground">
+                              <TableCell colSpan={3} className="py-1 pl-6">
+                                {date(p.paidAt)} · {ts(`methods.${p.method}`)}
+                                {p.trxId && <span className="font-mono"> · {p.trxId}</span>}
+                                {p.note && <> · {p.note}</>}
+                              </TableCell>
+                              <TableCell className="py-1 text-right tabular-nums">{taka(p.amount.toString())}</TableCell>
+                            </TableRow>
+                          ))}
+                        </Fragment>
                       ))}
                     </TableBody>
                   </Table>
                 </div>
               )}
-              <p className="mt-3 text-xs text-muted-foreground">{t("paymentsLater")}</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>{ts("newSubscription")}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <SubscriptionForm
+                schoolId={school.id}
+                startsOn={next.startsOn}
+                planId={next.planId}
+                plans={plans.map((p) => ({
+                  id: p.id,
+                  cycle: p.billingCycle,
+                  label: `${p.name} — ${taka(p.price.toString())} / ${tp(`per.${p.billingCycle}`)}`,
+                }))}
+              />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>{ts("payment")}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <PaymentForm
+                schoolId={school.id}
+                today={next.today}
+                subscriptions={school.subscriptions
+                  .filter((s) => s.status !== "CANCELLED")
+                  .map((s) => ({
+                    id: s.id,
+                    price: s.plan.price.toString(),
+                    label: `${s.plan.name} · ${date(s.startsAt)} – ${date(s.endsAt)}`,
+                  }))}
+              />
             </CardContent>
           </Card>
         </div>

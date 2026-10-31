@@ -207,8 +207,11 @@ export async function getSchoolDetail(id: number) {
       subscriptions: {
         orderBy: { startsAt: "desc" },
         include: {
-          plan: { select: { name: true } },
-          payments: { select: { amount: true } },
+          plan: { select: { name: true, price: true, billingCycle: true } },
+          payments: {
+            orderBy: { paidAt: "desc" },
+            select: { id: true, amount: true, method: true, trxId: true, paidAt: true, note: true },
+          },
         },
       },
       _count: { select: { students: true, staff: true, classes: true, users: true } },
@@ -243,6 +246,7 @@ export async function getSchoolDetail(id: number) {
     levels: school.levels as string[],
     subscriptions: school.subscriptions.map(({ payments, ...sub }) => ({
       ...sub,
+      payments,
       paid: payments.reduce((sum, p) => sum.add(p.amount), new P.Decimal(0)),
     })),
     admins,
