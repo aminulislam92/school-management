@@ -68,7 +68,7 @@ function Fields({
         <select
           id="sub-plan"
           name="planId"
-          value={planId}
+          defaultValue={planId} // not `value`: see the note in CLAUDE.md about form reset
           onChange={(e) => {
             setPlanId(e.target.value);
             setCustomEnd(null);

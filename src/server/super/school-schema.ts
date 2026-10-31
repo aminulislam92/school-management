@@ -10,14 +10,14 @@ export const LEVELS = ["PRE_PRIMARY", "PRIMARY", "SECONDARY", "HIGHER_SECONDARY"
 export { EDUCATION_BOARDS };
 
 /** Empty text box → undefined; otherwise check it with `schema`. */
-const optional = <T extends z.ZodType<unknown, string>>(schema: T) =>
+export const optional = <T extends z.ZodType<unknown, string>>(schema: T) =>
   z
     .string()
     .trim()
     .transform((s) => (s === "" ? undefined : s))
     .pipe(schema.optional());
 
-const bdPhone = z.string().transform((s, ctx) => {
+export const bdPhone = z.string().transform((s, ctx) => {
   const phone = normalizeBdPhone(s);
   if (!phone) {
     ctx.addIssue({ code: "custom", message: "phone" });

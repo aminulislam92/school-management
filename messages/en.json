@@ -401,5 +401,68 @@
       "trxIdRequired": "bKash/Nagad/Rocket/Bank payments need a TrxID.",
       "future": "A payment can't be dated in the future."
     }
+  },
+  "schoolProfile": {
+    "title": "School profile",
+    "hint": "The name, address, logo and signature here appear on marksheets, receipts and ID cards.",
+    "details": "School details",
+    "codeNote": "School code: {code} (contact the service provider to change it)",
+    "save": "Save",
+    "saving": "Saving...",
+    "saved": "Saved.",
+    "none": "— None —",
+    "address": "Address",
+    "pickDistrict": "Pick a district",
+    "pickDivisionFirst": "Pick a division first",
+    "addressPlaceholder": "Village/road, post office",
+    "fields": {
+      "nameBn": "School name (Bangla)",
+      "nameEn": "School name (English)",
+      "eiin": "EIIN",
+      "board": "Education board",
+      "phone": "Mobile",
+      "email": "Email",
+      "division": "Division",
+      "district": "District",
+      "upazila": "Upazila / Thana",
+      "addressLine": "Address details"
+    },
+    "errors": {
+      "name": "Name must be 2 to 120 characters.",
+      "eiin": "EIIN is a 5–7 digit number.",
+      "board": "Pick a board from the list.",
+      "phone": "Enter a valid mobile number, e.g. 01712345678.",
+      "email": "Enter a valid email.",
+      "division": "Pick a division from the list.",
+      "district": "Pick a district of this division.",
+      "upazila": "Upazila name is too long.",
+      "addressLine": "Keep the address under 300 characters."
+    },
+    "upload": {
+      "empty": "Not set yet",
+      "choose": "Choose image",
+      "change": "Change",
+      "uploading": "Uploading...",
+      "remove": "Remove",
+      "formats": "PNG, JPG or WebP, up to {mb, number} MB. Big images are shrunk automatically.",
+      "logo": {
+        "title": "Logo",
+        "hint": "A square logo looks best. Shown on the login page, receipts and marksheets."
+      },
+      "signature": {
+        "title": "Head teacher's signature",
+        "hint": "Sign in black ink on white paper, then photograph or scan it. Only logged-in staff can see it."
+      },
+      "errors": {
+        "tooBig": "The image is too big; use less than {mb, number} MB.",
+        "notImage": "This is not a PNG, JPG or WebP image.",
+        "noFile": "No file received.",
+        "login": "Please log in again.",
+        "forbidden": "You don't have permission for this.",
+        "badRequest": "The request is not valid.",
+        "notFound": "School not found.",
+        "failed": "Upload failed. Check the internet and try again."
+      }
+    }
   }
 }

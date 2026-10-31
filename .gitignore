@@ -40,3 +40,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Uploaded files (logos, signatures, photos) — see src/server/storage
+/storage/

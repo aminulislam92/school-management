@@ -44,6 +44,11 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Skip Next.js internals and static files.
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\.(?:png|jpg|jpeg|svg|webp|ico|txt)$).*)"],
+  // Skip Next.js internals and static files (but not /api/files, see below).
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:png|jpg|jpeg|svg|webp|ico|txt)$).*)",
+    // Uploaded files end in .png too, but they are app routes that need the
+    // school headers set here (and must never trust headers sent by a browser).
+    "/api/files/:path*",
+  ],
 };

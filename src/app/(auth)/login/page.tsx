@@ -5,6 +5,7 @@ import { LocaleSwitcher } from "@/components/locale-switcher";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getCurrentSchool, getTenantHost } from "@/lib/tenant";
 import { getCurrentUser, homePathFor } from "@/server/auth/dal";
+import { fileUrl } from "@/server/storage";
 import { LoginForm } from "./login-form";
 
 export default function LoginPage() {
@@ -46,8 +47,13 @@ async function LoginHeader() {
   if (!school) notFound();
   const locale = await getLocale();
 
+  const logo = fileUrl(school.logoUrl);
   return (
     <CardHeader>
+      {logo && (
+        // eslint-disable-next-line @next/next/no-img-element -- our own small, already-resized file
+        <img src={logo} alt="" className="mb-2 size-16 object-contain" />
+      )}
       <CardTitle className="text-xl">{locale === "bn" ? school.nameBn : school.nameEn}</CardTitle>
       <CardDescription>{t("auth.schoolLogin")}</CardDescription>
       {school.status !== "ACTIVE" && (
