@@ -562,7 +562,8 @@
     "classes": "Classes",
     "groups": "Groups",
     "sections": "Sections",
-    "subjects": "Subjects"
+    "subjects": "Subjects",
+    "classSubjects": "Class subjects"
   },
   "classes": {
     "title": "Classes",
@@ -629,7 +630,8 @@
     "class": "Its class is switched off; switch the class on first.",
     "paperFollowsParent": "A paper can't be switched off or deleted alone; change the parent subject.",
     "subjectInClasses": "A class still has this subject. Remove it from the class first.",
-    "subjectUsed": "This subject has been used, so it can't be deleted. Switch it off instead."
+    "subjectUsed": "This subject has been used, so it can't be deleted. Switch it off instead.",
+    "classSubjectUsed": "Exams or 4th-subject choices use it, so it can't be removed."
   },
   "sectionsPage": {
     "title": "Sections",
@@ -738,6 +740,83 @@
       "religion": "Pick a religion from the list.",
       "kind": "Pick a type.",
       "notFound": "Subject not found."
+    }
+  },
+  "classSubjects": {
+    "title": "Class subjects and marks",
+    "hint": "Which subjects each class (and, in 9–12, each group) has, their type, and the full and pass marks for written/MCQ/practical. Exams and results use this.",
+    "pickClass": "Pick a class",
+    "noClasses": "No class is switched on.",
+    "empty": "{name} has no subjects yet. Add them on the right, or copy from another class.",
+    "allStudents": "All students",
+    "allGroups": "All groups",
+    "subject": "Subject",
+    "pickSubject": "— Pick a subject —",
+    "type": "Type",
+    "group": "Group",
+    "types": {
+      "COMPULSORY": "Compulsory",
+      "OPTIONAL": "4th subject",
+      "RELIGION": "Religion"
+    },
+    "marks": "Marks split",
+    "full": "Full",
+    "pass": "Pass",
+    "parts": {
+      "written": "Written/Creative",
+      "mcq": "MCQ",
+      "practical": "Practical"
+    },
+    "presets": {
+      "written100": "100 written",
+      "creative70mcq30": "70 + 30 MCQ",
+      "creative50mcq25practical25": "50 + 25 + 25 practical",
+      "written50": "50 written"
+    },
+    "passHint": "Leave a pass mark empty for 33% of its full mark (70 → 23, 30 → 10, 25 → 8). Failing any part means F in the subject.",
+    "sortOrder": "Order on the marksheet",
+    "sortOrderShort": "No.",
+    "sortOrderPlaceholder": "automatic",
+    "total": "Total",
+    "edit": "Edit",
+    "remove": "Remove",
+    "confirmRemove": "Yes, remove",
+    "add": "Add subject",
+    "save": "Save",
+    "saving": "Saving...",
+    "saved": "Subject added.",
+    "cancel": "Cancel",
+    "addTitle": "Add a subject to {name}",
+    "editTitle": "Edit class subject",
+    "noSubjects": "Add subjects on the \"Subjects\" tab first.",
+    "twoPapers": "two papers",
+    "papersNote": "Adding a two-paper subject adds both papers; they share type and group, and each paper's marks can be edited. Results add both papers' marks.",
+    "paperEditHint": "This is a paper. Changing the type or group also changes the other paper.",
+    "copyTitle": "Copy from another class",
+    "copyHint": "Copies another class's subjects, types and marks into {name}. Subjects already here are skipped.",
+    "copyFrom": "From class",
+    "copyOption": "{name} ({count, number} subjects)",
+    "copy": "Copy",
+    "copied": "Copied {count, number} subjects.",
+    "errors": {
+      "subject": "Pick a subject that is switched on.",
+      "group": "Pick a group that is switched on.",
+      "type": "Pick a type.",
+      "marks": "Marks must be whole numbers from 0 to 200.",
+      "sortOrder": "The order must be a whole number.",
+      "class": "Class not found or switched off.",
+      "noGroupsInClass": "This class has no groups.",
+      "optionalNineUp": "A 4th subject only exists in Classes 9–12.",
+      "notReligionSubject": "This is not a religion subject.",
+      "religionNeedsType": "A religion subject must have the type \"Religion\".",
+      "noMarks": "Give marks for at least one part.",
+      "tooMany": "The total can't be more than 200.",
+      "passAboveFull": "{part}: pass mark is above the full mark.",
+      "negative": "{part}: marks are not valid.",
+      "alreadyInClass": "This subject is already in this class (or group).",
+      "notFound": "Not found.",
+      "sameClass": "Can't copy a class onto itself.",
+      "nothingToCopy": "Nothing new to copy."
     }
   }
 }
