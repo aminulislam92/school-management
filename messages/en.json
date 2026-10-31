@@ -197,5 +197,107 @@
       "routine": "Class routine",
       "certificates": "Certificates and ID cards"
     }
+  },
+  "schools": {
+    "title": "Schools",
+    "new": "New school",
+    "newTitle": "Create a school",
+    "empty": "No schools yet. Start with \"New school\".",
+    "noPlans": "You need at least one active plan first.",
+    "create": "Create school",
+    "creating": "Creating...",
+    "cancel": "Cancel",
+    "none": "— None —",
+    "codeHint": "The school's website will be:",
+    "adminHint": "This admin gets a temporary password and must change it at first login. Give an email or a mobile number (at least one).",
+    "subscription": "Subscription",
+    "students": "Students",
+    "status": "Status",
+    "subUntil": "{status} until {date}",
+    "subStatus": {
+      "TRIAL": "Trial",
+      "ACTIVE": "Active",
+      "GRACE": "Grace period",
+      "SUSPENDED": "Suspended",
+      "CANCELLED": "Cancelled"
+    },
+    "schoolStatus": {
+      "ACTIVE": "Active",
+      "SUSPENDED": "Suspended",
+      "CLOSED": "Closed"
+    },
+    "sections": {
+      "school": "School details",
+      "contact": "Contact and address",
+      "plan": "Plan and trial",
+      "admin": "First admin (head teacher)"
+    },
+    "placeholders": {
+      "nameBn": "আদর্শ উচ্চ বিদ্যালয়",
+      "nameEn": "Adarsha High School"
+    },
+    "fields": {
+      "nameBn": "School name (Bangla)",
+      "nameEn": "School name (English)",
+      "code": "School code (subdomain)",
+      "eiin": "EIIN",
+      "board": "Education board",
+      "levels": "Levels taught",
+      "phone": "School mobile",
+      "email": "School email",
+      "district": "District",
+      "upazila": "Upazila",
+      "plan": "Plan",
+      "trialDays": "Trial (days)",
+      "adminNameBn": "Name (Bangla)",
+      "adminNameEn": "Name (English)",
+      "adminEmail": "Email",
+      "adminPhone": "Mobile"
+    },
+    "levels": {
+      "PRE_PRIMARY": "Play / Nursery / KG",
+      "PRIMARY": "Primary (1–5)",
+      "SECONDARY": "Secondary (6–10)",
+      "HIGHER_SECONDARY": "Higher secondary (11–12)"
+    },
+    "boards": {
+      "Dhaka": "Dhaka",
+      "Rajshahi": "Rajshahi",
+      "Cumilla": "Cumilla",
+      "Jashore": "Jashore",
+      "Chattogram": "Chattogram",
+      "Barishal": "Barishal",
+      "Sylhet": "Sylhet",
+      "Dinajpur": "Dinajpur",
+      "Mymensingh": "Mymensingh",
+      "Madrasah": "Madrasah",
+      "Technical": "Technical"
+    },
+    "errors": {
+      "code": "Use 2–40 lowercase English letters, digits or - (reserved words like www, admin are not allowed).",
+      "codeTaken": "Another school already uses this code.",
+      "name": "Name must be 2 to 120 characters.",
+      "eiin": "EIIN is a 5–7 digit number.",
+      "board": "Pick a board from the list.",
+      "levels": "Pick at least one level.",
+      "phone": "Enter a valid mobile number, e.g. 01712345678.",
+      "email": "Enter a valid email.",
+      "plan": "Pick an active plan.",
+      "trialDays": "Enter 0 to 90 days.",
+      "adminName": "Name must be 2 to 80 characters.",
+      "adminContact": "Give the admin an email or a mobile number."
+    },
+    "created": {
+      "title": "{name} is ready",
+      "description": "Classes, groups, grade scale, fee types, SMS templates, the current session and a trial subscription were created.",
+      "url": "Login page",
+      "login": "Admin login",
+      "password": "Temporary password",
+      "copy": "Copy",
+      "copied": "Copied",
+      "warning": "This password will never be shown again. Copy it now and give it to the head teacher. They must set a new password at first login.",
+      "another": "Another school",
+      "list": "School list"
+    }
   }
 }

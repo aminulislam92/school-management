@@ -9,7 +9,7 @@ import {
   DEFAULT_FEE_TYPES,
   DEFAULT_GROUPS,
   DEFAULT_SMS_TEMPLATES,
-} from "./defaults";
+} from "../src/server/school-defaults";
 
 const db = new PrismaClient();
 

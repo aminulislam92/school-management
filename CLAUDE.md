@@ -24,7 +24,7 @@ The developer is learning Next.js: after each change, explain briefly in Bangla 
 - Requirements: `docs/01-PRD.md`
 - Pages, actions, API, permissions: `docs/03-routes.md`
 - Task list (tick when done): `docs/04-tasks.md`
-- Schema (source of truth): `prisma/schema.prisma`; default master data: `prisma/defaults.ts`
+- Schema (source of truth): `prisma/schema.prisma`; default master data: `src/server/school-defaults.ts`
 
 ## Rules
 - Multi-tenant: inside a school, always query through `const { school, sdb } = await getSchoolDb()` (`src/lib/tenant.ts`), never the plain `db`. `sdb` adds the school filter to every query and refuses cross-school writes (`src/server/db/school-db.ts`). Plain `db` is only for super-admin pages, seed and system jobs.

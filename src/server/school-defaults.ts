@@ -1,5 +1,5 @@
 // Default master data every new school starts with.
-// Used by prisma/seed.ts now, and later by createSchool() (task T1.11).
+// Used by createSchool() (src/server/super/schools.ts) and prisma/seed.ts.
 import type { FeeFrequency, Level } from "@prisma/client";
 
 export const DEFAULT_CLASSES: {
@@ -80,3 +80,18 @@ export const DEFAULT_SMS_TEMPLATES = [
     bodyEn: "Your login code is {code}. Valid for 5 minutes. Do not share it.",
   },
 ];
+
+/** Shown in the "board" dropdown when creating a school. */
+export const EDUCATION_BOARDS = [
+  "Dhaka",
+  "Rajshahi",
+  "Cumilla",
+  "Jashore",
+  "Chattogram",
+  "Barishal",
+  "Sylhet",
+  "Dinajpur",
+  "Mymensingh",
+  "Madrasah",
+  "Technical",
+] as const;
