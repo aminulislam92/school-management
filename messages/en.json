@@ -54,5 +54,38 @@
     "CLASS_TEACHER": "Class teacher",
     "STUDENT": "Student",
     "GUARDIAN": "Guardian"
+  },
+  "nav": {
+    "soon": "Soon",
+    "openMenu": "Open menu",
+    "groups": {
+      "main": "Main",
+      "daily": "Daily work",
+      "records": "Exams and accounts",
+      "setup": "Setup"
+    },
+    "items": {
+      "dashboard": "Dashboard",
+      "students": "Students",
+      "attendance": "Attendance",
+      "collectFees": "Collect fees",
+      "marks": "Marks entry",
+      "notices": "Notices",
+      "sms": "Send SMS",
+      "exams": "Exams",
+      "results": "Results",
+      "financeReports": "Finance reports",
+      "expenses": "Expenses",
+      "academic": "Academic setup",
+      "feeSetup": "Fee setup",
+      "staff": "Teachers and staff",
+      "users": "Users",
+      "settings": "School settings",
+      "auditLog": "Change log"
+    }
+  },
+  "dashboard": {
+    "comingTitle": "Dashboard in progress",
+    "comingText": "Today's attendance, fee collection and dues will appear here. Start from the menu on the left; items marked \"Soon\" arrive in the next steps."
   }
 }

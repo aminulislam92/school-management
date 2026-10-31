@@ -1,7 +1,7 @@
 // Development seed: one plan, one SUPER_ADMIN, and a "demo" school with its
-// default master data and an ADMIN user. Safe to run more than once.
+// default master data and one user per staff role. Safe to run more than once.
 // Run with: npm run db:seed
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, type Role } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import {
   BD_GRADE_SCALE,
@@ -17,6 +17,7 @@ const SUPER_ADMIN_EMAIL = process.env.SEED_SUPER_ADMIN_EMAIL ?? "superadmin@exam
 const SUPER_ADMIN_PASSWORD = process.env.SEED_SUPER_ADMIN_PASSWORD ?? "SuperAdmin@123";
 const DEMO_ADMIN_EMAIL = process.env.SEED_DEMO_ADMIN_EMAIL ?? "admin@demo.school";
 const DEMO_ADMIN_PASSWORD = process.env.SEED_DEMO_ADMIN_PASSWORD ?? "Admin@12345";
+const DEMO_STAFF_PASSWORD = process.env.SEED_DEMO_STAFF_PASSWORD ?? "Staff@12345";
 
 async function main() {
   // 1. Plan
@@ -142,23 +143,71 @@ async function main() {
     },
   });
 
-  // 7. Demo school admin
-  const admin = await db.user.findFirst({ where: { schoolId, email: DEMO_ADMIN_EMAIL } });
-  if (!admin) {
+  // 7. Demo school staff: one user per role, to try out menus and permissions
+  const demoStaff: {
+    email: string;
+    password: string;
+    roles: Role[];
+    nameEn: string;
+    nameBn: string;
+    designation: string;
+    phone: string;
+  }[] = [
+    {
+      email: DEMO_ADMIN_EMAIL,
+      password: DEMO_ADMIN_PASSWORD,
+      roles: ["ADMIN"],
+      nameEn: "Demo Head Teacher",
+      nameBn: "ডেমো প্রধান শিক্ষক",
+      designation: "Head Teacher",
+      phone: "01700000001",
+    },
+    {
+      email: "teacher@demo.school",
+      password: DEMO_STAFF_PASSWORD,
+      roles: ["TEACHER", "CLASS_TEACHER"],
+      nameEn: "Demo Teacher",
+      nameBn: "ডেমো শিক্ষক",
+      designation: "Assistant Teacher",
+      phone: "01700000002",
+    },
+    {
+      email: "accountant@demo.school",
+      password: DEMO_STAFF_PASSWORD,
+      roles: ["ACCOUNTANT"],
+      nameEn: "Demo Accountant",
+      nameBn: "ডেমো হিসাবরক্ষক",
+      designation: "Accountant",
+      phone: "01700000003",
+    },
+    {
+      email: "office@demo.school",
+      password: DEMO_STAFF_PASSWORD,
+      roles: ["OFFICE_STAFF"],
+      nameEn: "Demo Office Assistant",
+      nameBn: "ডেমো অফিস সহকারী",
+      designation: "Office Assistant",
+      phone: "01700000004",
+    },
+  ];
+
+  for (const s of demoStaff) {
+    const exists = await db.user.findFirst({ where: { schoolId, email: s.email } });
+    if (exists) continue;
     await db.user.create({
       data: {
         schoolId,
-        email: DEMO_ADMIN_EMAIL,
-        passwordHash: await bcrypt.hash(DEMO_ADMIN_PASSWORD, 12),
+        email: s.email,
+        passwordHash: await bcrypt.hash(s.password, 12),
         mustChangePassword: true,
-        roles: { create: { role: "ADMIN" } },
+        roles: { create: s.roles.map((role) => ({ role })) },
         staff: {
           create: {
             schoolId,
-            nameEn: "Demo Head Teacher",
-            nameBn: "ডেমো প্রধান শিক্ষক",
-            designation: "Head Teacher",
-            phone: "01700000001",
+            nameEn: s.nameEn,
+            nameBn: s.nameBn,
+            designation: s.designation,
+            phone: s.phone,
           },
         },
       },
@@ -166,10 +215,10 @@ async function main() {
   }
 
   console.log("Seed complete.");
-  console.log(`  Super admin: ${SUPER_ADMIN_EMAIL}`);
-  console.log(`  Demo school: demo  (open http://demo.localhost:3000 later)`);
-  console.log(`  Demo admin:  ${DEMO_ADMIN_EMAIL}`);
-  console.log("  Passwords are the SEED_* values in .env (or the defaults in prisma/seed.ts).");
+  console.log(`  Super admin: ${SUPER_ADMIN_EMAIL}  (http://localhost:3000/login)`);
+  console.log(`  Demo school: http://demo.localhost:3000/login`);
+  for (const s of demoStaff) console.log(`    ${s.roles.join("+").padEnd(22)} ${s.email}`);
+  console.log("  Passwords: SEED_* values in .env, or the defaults at the top of prisma/seed.ts.");
 }
 
 main()
