@@ -20,7 +20,7 @@ export function ForgotPasswordForm() {
 
   const error = state.error && (
     <p id="forgot-error" role="alert" className="text-sm text-destructive">
-      {state.error === "required" || state.error === "invalidCode"
+      {state.error === "required" || state.error === "invalidCode" || state.error === "schoolClosed"
         ? t(`errors.${state.error}`)
         : tp(`errors.${state.error}`, { min: MIN_PASSWORD_LENGTH })}
     </p>

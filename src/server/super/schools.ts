@@ -1,6 +1,8 @@
 // Creating and listing schools (super admin only). Uses the plain `db`:
 // the super admin works across schools.
 import { randomInt } from "node:crypto";
+import type { SchoolStatus } from "@prisma/client";
+import { Prisma as P } from "@prisma/client";
 import { db } from "@/lib/db";
 import { hashPassword } from "@/server/auth/password";
 import {
@@ -10,7 +12,7 @@ import {
   DEFAULT_GROUPS,
   DEFAULT_SMS_TEMPLATES,
 } from "@/server/school-defaults";
-import type { NewSchoolErrors, NewSchoolInput } from "./school-schema";
+import type { NewSchoolErrors, NewSchoolInput, SchoolStatusInput } from "./school-schema";
 
 export * from "./school-schema";
 
@@ -148,9 +150,26 @@ export async function createSchool(
   };
 }
 
-export function listSchools() {
+export type SchoolFilter = { q?: string; status?: SchoolStatus };
+
+/** All schools, newest first, optionally searched (name, code, EIIN) and filtered by status. */
+export function listSchools(filter: SchoolFilter = {}) {
+  const q = filter.q?.trim();
+  const where: P.SchoolWhereInput = {
+    status: filter.status,
+    OR: q
+      ? [
+          { code: { contains: q.toLowerCase() } },
+          { nameBn: { contains: q } },
+          { nameEn: { contains: q } },
+          { eiin: { contains: q } },
+        ]
+      : undefined,
+  };
   return db.school.findMany({
+    where,
     orderBy: { createdAt: "desc" },
+    take: 200,
     select: {
       id: true,
       code: true,
@@ -166,6 +185,98 @@ export function listSchools() {
       },
     },
   });
+}
+
+/** How many schools have each status (for the filter tabs). */
+export async function countSchoolsByStatus(): Promise<Record<SchoolStatus | "ALL", number>> {
+  const rows = await db.school.groupBy({ by: ["status"], _count: { _all: true } });
+  const out = { ALL: 0, ACTIVE: 0, SUSPENDED: 0, CLOSED: 0 };
+  for (const r of rows) {
+    out[r.status] = r._count._all;
+    out.ALL += r._count._all;
+  }
+  return out;
+}
+
+/** Everything the super admin's school page shows, or null for an unknown id. */
+export async function getSchoolDetail(id: number) {
+  const school = await db.school.findUnique({
+    where: { id },
+    include: {
+      setting: { select: { smsCreditBalance: true, studentLoginFromOrder: true } },
+      subscriptions: {
+        orderBy: { startsAt: "desc" },
+        include: {
+          plan: { select: { name: true } },
+          payments: { select: { amount: true } },
+        },
+      },
+      _count: { select: { students: true, staff: true, classes: true, users: true } },
+    },
+  });
+  if (!school) return null;
+
+  const [admins, history] = await Promise.all([
+    db.user.findMany({
+      where: { schoolId: id, roles: { some: { role: "ADMIN" } } },
+      orderBy: { id: "asc" },
+      select: {
+        id: true,
+        email: true,
+        phone: true,
+        isActive: true,
+        mustChangePassword: true,
+        lastLoginAt: true,
+        staff: { select: { nameBn: true, nameEn: true } },
+      },
+    }),
+    db.auditLog.findMany({
+      where: { schoolId: id, entity: "School", entityId: String(id) },
+      orderBy: { createdAt: "desc" },
+      take: 20,
+      select: { id: true, action: true, before: true, after: true, createdAt: true, user: { select: { email: true } } },
+    }),
+  ]);
+
+  return {
+    ...school,
+    levels: school.levels as string[],
+    subscriptions: school.subscriptions.map(({ payments, ...sub }) => ({
+      ...sub,
+      paid: payments.reduce((sum, p) => sum.add(p.amount), new P.Decimal(0)),
+    })),
+    admins,
+    history,
+  };
+}
+
+export type SchoolDetail = NonNullable<Awaited<ReturnType<typeof getSchoolDetail>>>;
+
+/**
+ * Opens, suspends or closes a school, with the reason in the audit log.
+ * Users of a non-ACTIVE school are logged out on their next click
+ * (getSession() in dal.ts checks the status), and nothing is deleted.
+ */
+export async function setSchoolStatus(input: SchoolStatusInput, actorId: number) {
+  const school = await db.school.findUnique({ where: { id: input.id }, select: { status: true } });
+  if (!school) return { ok: false as const, error: "notFound" as const };
+  if (school.status === input.status) return { ok: true as const, changed: false };
+
+  await db.$transaction([
+    db.school.update({ where: { id: input.id }, data: { status: input.status } }),
+    db.auditLog.create({
+      data: {
+        schoolId: input.id,
+        userId: actorId,
+        action: "STATUS",
+        entity: "School",
+        entityId: String(input.id),
+        before: { status: school.status },
+        after: { status: input.status, reason: input.reason || null },
+      },
+    }),
+  ]);
+  return { ok: true as const, changed: true };
 }
 
 export function listActivePlans() {

@@ -86,3 +86,20 @@ export function newSchoolErrors(error: z.ZodError): NewSchoolErrors {
   }
   return out;
 }
+
+// ── Status change (T1.12) ─────────────────────────────────────────────
+// ACTIVE: open. SUSPENDED: nobody of the school can log in (e.g. unpaid,
+// dispute) until the super admin opens it again. CLOSED: the school left;
+// its data is kept (never deleted) but the site stays shut.
+export const SCHOOL_STATUSES = ["ACTIVE", "SUSPENDED", "CLOSED"] as const;
+
+export const SchoolStatusInput = z
+  .object({
+    id: z.coerce.number().int().positive(),
+    status: z.enum(SCHOOL_STATUSES, { message: "status" }),
+    reason: z.string().trim().max(500, { message: "reason" }),
+  })
+  // Shutting a school needs a reason, so the history explains itself later.
+  .refine((v) => v.status === "ACTIVE" || v.reason.length >= 3, { message: "reason", path: ["reason"] });
+
+export type SchoolStatusInput = z.infer<typeof SchoolStatusInput>;

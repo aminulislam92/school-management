@@ -47,8 +47,9 @@ export const getSession = cache(async (): Promise<SessionPayload | null> => {
   const tenant = await getTenantHost();
   if (tenant.kind === "root") return session.sch === null ? session : null;
 
+  // A suspended or closed school logs everyone out at once (T1.12).
   const school = await getCurrentSchool();
-  return school && session.sch === school.id ? session : null;
+  return school && school.status === "ACTIVE" && session.sch === school.id ? session : null;
 });
 
 /**

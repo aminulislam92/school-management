@@ -50,6 +50,11 @@ async function LoginHeader() {
     <CardHeader>
       <CardTitle className="text-xl">{locale === "bn" ? school.nameBn : school.nameEn}</CardTitle>
       <CardDescription>{t("auth.schoolLogin")}</CardDescription>
+      {school.status !== "ACTIVE" && (
+        <p id="school-closed" role="status" className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+          {t("auth.errors.schoolClosed")}
+        </p>
+      )}
     </CardHeader>
   );
 }

@@ -9,7 +9,7 @@ import { createSession, deleteSession, getCurrentUser, homePathFor } from "./dal
 import { requestPasswordReset, resetPassword, type ResetResult } from "./password-reset";
 
 export type LoginState = {
-  error?: "required" | "invalid" | "locked" | "inactive" | "noSchool";
+  error?: "required" | "invalid" | "locked" | "inactive" | "noSchool" | "schoolClosed";
   minutes?: number;
   identifier?: string;
 };
@@ -33,6 +33,7 @@ export async function loginAction(_prev: LoginState, formData: FormData): Promis
   if (tenant.kind !== "root") {
     const school = await getCurrentSchool();
     if (!school) return { error: "noSchool", identifier };
+    if (school.status !== "ACTIVE") return { error: "schoolClosed", identifier };
     schoolId = school.id;
   }
 
@@ -84,7 +85,7 @@ export async function changePasswordAction(
 export type ForgotPasswordState = {
   step: "request" | "code" | "done";
   identifier?: string;
-  error?: "required" | Extract<ResetResult, { ok: false }>["problem"];
+  error?: "required" | "schoolClosed" | Extract<ResetResult, { ok: false }>["problem"];
 };
 
 /** One action for both steps of /forgot-password (the form sends `step`). */
@@ -101,6 +102,7 @@ export async function forgotPasswordAction(
   if (tenant.kind !== "root") {
     const school = await getCurrentSchool();
     if (!school) return { step: "request", identifier, error: "invalidCode" };
+    if (school.status !== "ACTIVE") return { step: "request", identifier, error: "schoolClosed" };
     schoolId = school.id;
   }
 

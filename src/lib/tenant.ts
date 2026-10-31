@@ -45,7 +45,8 @@ export type CurrentSchool = NonNullable<Awaited<ReturnType<typeof getCurrentScho
 
 /**
  * Use in pages and actions that only make sense inside a school.
- * Unknown school → 404. Suspended/closed schools are handled in task T6.2.
+ * Unknown school → 404. A SUSPENDED/CLOSED school has no logged-in users
+ * (getSession() in dal.ts); read-only mode for expired subscriptions is T6.2.
  */
 export async function requireSchool(): Promise<CurrentSchool> {
   const school = await getCurrentSchool();

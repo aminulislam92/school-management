@@ -2,8 +2,15 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { db } from "@/lib/db";
 import { authenticate } from "@/server/auth/authenticate";
-import { NewSchoolInput } from "./school-schema";
-import { createSchool, generateTempPassword } from "./schools";
+import { NewSchoolInput, SchoolStatusInput } from "./school-schema";
+import {
+  countSchoolsByStatus,
+  createSchool,
+  generateTempPassword,
+  getSchoolDetail,
+  listSchools,
+  setSchoolStatus,
+} from "./schools";
 
 const run = Date.now().toString(36);
 let actor: number;
@@ -164,5 +171,58 @@ describe("NewSchoolInput", () => {
     const r = NewSchoolInput.safeParse(raw(change));
     expect(r.success).toBe(false);
     if (!r.success) expect(r.error.issues.map((i) => i.path[0])).toContain(field);
+  });
+});
+
+describe("list, detail and status (T1.12)", () => {
+  let id: number;
+  beforeAll(async () => {
+    const r = await createSchool(input({ code: `stat-${run}`, nameEn: `Status Test ${run}`, eiin: "765432" }), actor);
+    if (!r.ok) throw new Error("setup failed");
+    id = r.schoolId;
+    schoolIds.push(id);
+  });
+
+  it("searches by code, name and EIIN, and filters by status", async () => {
+    for (const q of [`STAT-${run}`, `Status Test ${run}`, "765432"]) {
+      expect((await listSchools({ q })).map((s) => s.id)).toContain(id);
+    }
+    expect((await listSchools({ q: `stat-${run}`, status: "SUSPENDED" })).length).toBe(0);
+  });
+
+  it("needs a reason to suspend or close, not to reopen", () => {
+    expect(SchoolStatusInput.safeParse({ id, status: "SUSPENDED", reason: " " }).success).toBe(false);
+    expect(SchoolStatusInput.safeParse({ id, status: "CLOSED", reason: "left" }).success).toBe(true);
+    expect(SchoolStatusInput.safeParse({ id, status: "ACTIVE", reason: "" }).success).toBe(true);
+    expect(SchoolStatusInput.safeParse({ id, status: "DELETED", reason: "x y z" }).success).toBe(false);
+  });
+
+  it("changes the status with an audit log entry, and shows it on the detail page", async () => {
+    const before = await countSchoolsByStatus();
+    const status = SchoolStatusInput.parse({ id, status: "SUSPENDED", reason: "Bill unpaid" });
+    expect(await setSchoolStatus(status, actor)).toEqual({ ok: true, changed: true });
+    expect(await setSchoolStatus(status, actor)).toEqual({ ok: true, changed: false }); // no duplicate log
+
+    const after = await countSchoolsByStatus();
+    expect(after.SUSPENDED).toBe(before.SUSPENDED + 1);
+    expect(after.ACTIVE).toBe(before.ACTIVE - 1);
+    expect((await listSchools({ q: `stat-${run}`, status: "SUSPENDED" })).map((s) => s.id)).toEqual([id]);
+
+    const detail = await getSchoolDetail(id);
+    expect(detail?.status).toBe("SUSPENDED");
+    expect(detail?.admins.map((a) => a.email)).toEqual([`head-${run}@notun.test`]);
+    expect(detail?.subscriptions[0].paid.toString()).toBe("0");
+    expect(detail?.history.map((h) => [h.action, (h.after as { reason?: string }).reason ?? null])).toEqual([
+      ["STATUS", "Bill unpaid"],
+      ["CREATE", null],
+    ]);
+
+    await setSchoolStatus(SchoolStatusInput.parse({ id, status: "ACTIVE", reason: "" }), actor);
+    expect((await db.school.findUniqueOrThrow({ where: { id } })).status).toBe("ACTIVE");
+  });
+
+  it("unknown school", async () => {
+    expect(await getSchoolDetail(99_999_999)).toBeNull();
+    expect(await setSchoolStatus({ id: 99_999_999, status: "ACTIVE", reason: "" }, actor)).toEqual({ ok: false, error: "notFound" });
   });
 });

@@ -214,6 +214,8 @@ function Created({ created }: { created: NonNullable<NewSchoolState["created"]> 
           {t("created.warning")}
         </p>
         <div className="flex flex-wrap gap-2">
+          {/* A full page load on purpose: it clears the form and the one-time password. */}
+          {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
           <a href="/super/schools/new" className={buttonVariants({ variant: "outline" })}>
             {t("created.another")}
           </a>

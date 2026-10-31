@@ -39,7 +39,8 @@
       "invalid": "Those sign-in details are not correct.",
       "locked": "Too many wrong passwords. Try again in {minutes, number} minutes.",
       "inactive": "This account is switched off. Please contact the school office.",
-      "noSchool": "No school was found at this address."
+      "noSchool": "No school was found at this address.",
+      "schoolClosed": "This school's account is currently closed. Please contact the service provider."
     }
   },
   "areas": {
@@ -134,7 +135,8 @@
     "link": "Forgot password?",
     "errors": {
       "required": "Enter your email, mobile number or Student ID.",
-      "invalidCode": "That code is wrong or has expired. Ask for a new code and try again."
+      "invalidCode": "That code is wrong or has expired. Ask for a new code and try again.",
+      "schoolClosed": "This school's account is currently closed. Please contact the service provider."
     }
   },
   "super": {
@@ -298,6 +300,52 @@
       "warning": "This password will never be shown again. Copy it now and give it to the head teacher. They must set a new password at first login.",
       "another": "Another school",
       "list": "School list"
-    }
+    },
+    "all": "All",
+    "search": "Search",
+    "searchPlaceholder": "Name, code or EIIN",
+    "noMatch": "No school matches this search.",
+    "customDomain": "Custom domain",
+    "address": "Address",
+    "createdAt": "Added on",
+    "openSite": "School site",
+    "staffCount": "Teachers and staff",
+    "classCount": "Classes",
+    "userCount": "Login accounts",
+    "smsCredits": "SMS credits",
+    "admins": "Admins",
+    "adminInactive": "Inactive",
+    "adminTempPassword": "Temporary password not changed",
+    "lastLogin": "Last login {date}",
+    "neverLoggedIn": "Never logged in",
+    "subscriptionHistory": "Subscription history",
+    "noSubscriptions": "No subscriptions.",
+    "period": "Period",
+    "paid": "Paid",
+    "paymentsLater": "New subscriptions and payment entry come in the next step (T1.13).",
+    "changeStatus": "School status",
+    "current": "now",
+    "reason": "Reason",
+    "reasonPlaceholder": "e.g. 3 months unpaid",
+    "saving": "Saving...",
+    "saveStatus": "Change status",
+    "statusSaved": "Status changed.",
+    "statusHelp": {
+      "ACTIVE": "Everyone at the school can log in and work as usual.",
+      "SUSPENDED": "Paused: nobody can log in, and logged-in users are signed out. Data is kept.",
+      "CLOSED": "The school left the service: site shut, data is never deleted."
+    },
+    "statusErrors": {
+      "reason": "Write a reason (at least 3 characters) to suspend or close.",
+      "status": "Pick a status.",
+      "notFound": "School not found."
+    },
+    "history": "History",
+    "historyStatus": "Status: {status}",
+    "historyAction": {
+      "CREATE": "School created",
+      "OTHER": "Change"
+    },
+    "noHistory": "No changes yet."
   }
 }
