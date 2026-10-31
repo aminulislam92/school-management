@@ -112,5 +112,24 @@
       "mismatch": "The two new passwords don't match.",
       "noUser": "Account not found. Please sign in again."
     }
+  },
+  "forgotPassword": {
+    "title": "Forgot your password?",
+    "description": "Enter your email, mobile number or Student ID. We'll send a 6-digit code.",
+    "identifier": "Email, mobile number or Student ID",
+    "sendCode": "Send code",
+    "sending": "Sending...",
+    "codeSent": "If this account exists, a code was sent for \"{identifier}\". It is valid for 10 minutes.",
+    "code": "6-digit code",
+    "setPassword": "Save new password",
+    "startOver": "Start over",
+    "backToLogin": "Back to sign in",
+    "done": "Your password has been changed. Sign in with the new password.",
+    "goToLogin": "Sign in",
+    "link": "Forgot password?",
+    "errors": {
+      "required": "Enter your email, mobile number or Student ID.",
+      "invalidCode": "That code is wrong or has expired. Ask for a new code and try again."
+    }
   }
 }

@@ -15,6 +15,7 @@ The developer is learning Next.js: after each change, explain briefly in Bangla 
 
 ## Commands
 - Dev: `npm run dev` (school apps on `http://demo.localhost:3000`)
+- Forgot-password codes are printed in the `npm run dev` terminal (`[DEV] Password reset code ...`) until SMS exists (T5.8); never in production
 - Lint / types / tests: `npm run lint`, `npm run typecheck`, `npm test` (no DB), `npm run test:db` (uses local MySQL)
 - DB: `npm run db:migrate -- --name <name>`, `npm run db:seed`, `npm run db:studio`
 - Build: `npm run build`

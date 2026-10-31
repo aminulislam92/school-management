@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,6 +11,7 @@ import { loginAction, type LoginState } from "@/server/auth/actions";
 
 export function LoginForm() {
   const t = useTranslations("auth");
+  const tf = useTranslations("forgotPassword");
   const [state, formAction, pending] = useActionState<LoginState, FormData>(loginAction, {});
 
   return (
@@ -28,7 +30,12 @@ export function LoginForm() {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="password">{t("password")}</Label>
+        <div className="flex items-center justify-between">
+          <Label htmlFor="password">{t("password")}</Label>
+          <Link href="/forgot-password" className="text-xs text-muted-foreground underline-offset-4 hover:underline">
+            {tf("link")}
+          </Link>
+        </div>
         <PasswordInput
           id="password"
           name="password"

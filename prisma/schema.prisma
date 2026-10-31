@@ -422,11 +422,12 @@ model User {
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
 
-  school   School?    @relation(fields: [schoolId], references: [id])
-  roles    UserRole[]
-  staff    Staff?
-  student  Student?
-  guardian Guardian?
+  school         School?         @relation(fields: [schoolId], references: [id])
+  roles          UserRole[]
+  passwordResets PasswordReset[]
+  staff          Staff?
+  student        Student?
+  guardian       Guardian?
 
   attendancesTaken  Attendance[]      @relation("AttendanceTakenBy")
   paymentsCollected Payment[]         @relation("PaymentCollectedBy")
@@ -441,6 +442,21 @@ model User {
   @@unique([schoolId, email])
   @@unique([schoolId, phone])
   @@unique([schoolId, username])
+}
+
+// "Forgot password" codes. Only a hash of the code is stored.
+model PasswordReset {
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  codeHash  String
+  expiresAt DateTime
+  attempts  Int       @default(0)
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
 }
 
 model UserRole {

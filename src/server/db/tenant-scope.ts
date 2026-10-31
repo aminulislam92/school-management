@@ -16,6 +16,7 @@ export const CHILD_MODELS: Partial<
   Record<ModelName, { relation: string; fk: string; parent: ModelName }>
 > = {
   UserRole: { relation: "user", fk: "userId", parent: "User" },
+  PasswordReset: { relation: "user", fk: "userId", parent: "User" },
   ClassSubject: { relation: "class", fk: "classId", parent: "SchoolClass" },
   StudentGuardian: { relation: "student", fk: "studentId", parent: "Student" },
   ClassTeacherAssignment: { relation: "section", fk: "sectionId", parent: "Section" },

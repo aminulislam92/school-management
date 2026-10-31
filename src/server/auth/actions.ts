@@ -6,6 +6,7 @@ import { getCurrentSchool, getTenantHost } from "@/lib/tenant";
 import { authenticate } from "./authenticate";
 import { changePassword, type ChangePasswordResult } from "./change-password";
 import { createSession, deleteSession, getCurrentUser, homePathFor } from "./dal";
+import { requestPasswordReset, resetPassword, type ResetResult } from "./password-reset";
 
 export type LoginState = {
   error?: "required" | "invalid" | "locked" | "inactive" | "noSchool";
@@ -78,4 +79,42 @@ export async function changePasswordAction(
   // Other devices are now logged out; give this device a fresh cookie.
   await createSession({ uid: user.id, sch: user.schoolId, roles: user.roles, ver: result.sessionVersion });
   redirect(homePathFor(user.roles));
+}
+
+export type ForgotPasswordState = {
+  step: "request" | "code" | "done";
+  identifier?: string;
+  error?: "required" | Extract<ResetResult, { ok: false }>["problem"];
+};
+
+/** One action for both steps of /forgot-password (the form sends `step`). */
+export async function forgotPasswordAction(
+  prev: ForgotPasswordState,
+  formData: FormData,
+): Promise<ForgotPasswordState> {
+  const identifier = String(formData.get("identifier") ?? "").trim();
+  if (!identifier) return { step: "request", error: "required" };
+
+  // The school comes from the domain, never from the form.
+  const tenant = await getTenantHost();
+  let schoolId: number | null = null;
+  if (tenant.kind !== "root") {
+    const school = await getCurrentSchool();
+    if (!school) return { step: "request", identifier, error: "invalidCode" };
+    schoolId = school.id;
+  }
+
+  if (formData.get("step") === "request") {
+    await requestPasswordReset({ identifier, schoolId });
+    return { step: "code", identifier };
+  }
+
+  const result = await resetPassword({
+    identifier,
+    schoolId,
+    code: String(formData.get("code") ?? ""),
+    next: String(formData.get("next") ?? ""),
+    confirm: String(formData.get("confirm") ?? ""),
+  });
+  return result.ok ? { step: "done" } : { step: "code", identifier, error: result.problem };
 }
