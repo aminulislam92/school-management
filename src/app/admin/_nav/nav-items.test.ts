@@ -1,6 +1,7 @@
 import type { Role } from "@prisma/client";
 import { describe, expect, it } from "vitest";
-import { activeHref, NAV, navFor } from "./nav-items";
+import { activeHref } from "@/components/shell/nav-types";
+import { NAV, navFor } from "./nav-items";
 
 const keys = (roles: Role[]) => navFor(roles).flatMap((g) => g.items.map((i) => i.key));
 

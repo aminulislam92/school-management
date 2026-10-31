@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import {
   CalendarCheck,
   ChartColumn,
+  CreditCard,
   ClipboardList,
   Coins,
   GraduationCap,
@@ -14,8 +15,10 @@ import {
   Megaphone,
   Menu,
   MessageSquare,
+  Package,
   PenLine,
   Receipt,
+  School,
   Settings,
   Trophy,
   UserCog,
@@ -27,7 +30,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { activeHref, type NavIcon } from "./nav-items";
+import { activeHref, type NavIcon } from "./nav-types";
 
 const ICONS: Record<NavIcon, LucideIcon> = {
   home: LayoutDashboard,
@@ -47,6 +50,9 @@ const ICONS: Record<NavIcon, LucideIcon> = {
   academic: GraduationCap,
   settings: Settings,
   audit: History,
+  schools: School,
+  plans: Package,
+  subscriptions: CreditCard,
 };
 
 // Labels are translated on the server and passed in as plain strings.
@@ -125,7 +131,7 @@ export function MobileNav({
 }: {
   groups: NavLinkGroup[];
   soonLabel: string;
-  title: string;
+  title: React.ReactNode;
   openLabel: string;
 }) {
   const [open, setOpen] = useState(false);

@@ -1,37 +1,8 @@
 // The school panel menu. Each item shows only for users with its permission.
 // `ready: false` items are listed but not clickable yet ("coming soon");
-// switch them to true as each page is built.
+// switch them to true as each page is built. Types: src/components/shell/nav-types.ts
 import type { Role } from "@prisma/client";
-import { can, type Permission } from "@/server/auth/permissions";
-
-export type NavIcon =
-  | "home"
-  | "students"
-  | "attendance"
-  | "fees"
-  | "feeSetup"
-  | "reports"
-  | "expenses"
-  | "exams"
-  | "marks"
-  | "results"
-  | "notices"
-  | "sms"
-  | "staff"
-  | "users"
-  | "academic"
-  | "settings"
-  | "audit";
-
-export type NavItem = {
-  key: string; // translation key under "nav.items"
-  href: string;
-  icon: NavIcon;
-  permission: Permission | null; // null = every staff member
-  ready: boolean;
-};
-
-export type NavGroup = { key: string; items: NavItem[] };
+import { filterNav, type NavGroup } from "@/components/shell/nav-types";
 
 export const NAV: NavGroup[] = [
   {
@@ -71,16 +42,7 @@ export const NAV: NavGroup[] = [
   },
 ];
 
-/** The menu for these roles: hidden items removed, empty groups dropped. */
+/** The school panel menu for these roles. */
 export function navFor(roles: readonly Role[]): NavGroup[] {
-  return NAV.map((group) => ({
-    ...group,
-    items: group.items.filter((item) => item.permission === null || can(roles, item.permission)),
-  })).filter((group) => group.items.length > 0);
-}
-
-/** Which item is "current" for a URL: the longest matching href wins. */
-export function activeHref(pathname: string, hrefs: string[]): string | null {
-  const matches = hrefs.filter((h) => pathname === h || pathname.startsWith(`${h}/`));
-  return matches.sort((a, b) => b.length - a.length)[0] ?? null;
+  return filterNav(NAV, roles);
 }

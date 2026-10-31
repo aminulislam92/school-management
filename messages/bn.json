@@ -64,7 +64,8 @@
       "main": "মূল",
       "daily": "প্রতিদিনের কাজ",
       "records": "পরীক্ষা ও হিসাব",
-      "setup": "সেটআপ"
+      "setup": "সেটআপ",
+      "saas": "স্কুল ও সাবস্ক্রিপশন"
     },
     "items": {
       "dashboard": "ড্যাশবোর্ড",
@@ -83,7 +84,11 @@
       "staff": "শিক্ষক ও স্টাফ",
       "users": "ইউজার",
       "settings": "স্কুল সেটিংস",
-      "auditLog": "পরিবর্তনের লগ"
+      "auditLog": "পরিবর্তনের লগ",
+      "superDashboard": "ড্যাশবোর্ড",
+      "schools": "স্কুল",
+      "plans": "প্ল্যান",
+      "subscriptions": "সাবস্ক্রিপশন"
     }
   },
   "dashboard": {
@@ -130,6 +135,17 @@
     "errors": {
       "required": "ইমেইল, মোবাইল নম্বর বা Student ID লিখুন।",
       "invalidCode": "কোডটি সঠিক নয় বা মেয়াদ শেষ। নতুন কোড চেয়ে আবার চেষ্টা করুন।"
+    }
+  },
+  "super": {
+    "brand": "সুপার অ্যাডমিন",
+    "stats": {
+      "schools": "মোট স্কুল",
+      "activeSchools": "{count, number}টি সক্রিয়",
+      "subscriptions": "চালু সাবস্ক্রিপশন",
+      "subscriptionsNote": "ট্রায়াল, সক্রিয় ও গ্রেস পিরিয়ড",
+      "students": "মোট শিক্ষার্থী",
+      "studentsNote": "সব স্কুলের সক্রিয় শিক্ষার্থী"
     }
   }
 }

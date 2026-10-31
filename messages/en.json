@@ -64,7 +64,8 @@
       "main": "Main",
       "daily": "Daily work",
       "records": "Exams and accounts",
-      "setup": "Setup"
+      "setup": "Setup",
+      "saas": "Schools and billing"
     },
     "items": {
       "dashboard": "Dashboard",
@@ -83,7 +84,11 @@
       "staff": "Teachers and staff",
       "users": "Users",
       "settings": "School settings",
-      "auditLog": "Change log"
+      "auditLog": "Change log",
+      "superDashboard": "Dashboard",
+      "schools": "Schools",
+      "plans": "Plans",
+      "subscriptions": "Subscriptions"
     }
   },
   "dashboard": {
@@ -130,6 +135,17 @@
     "errors": {
       "required": "Enter your email, mobile number or Student ID.",
       "invalidCode": "That code is wrong or has expired. Ask for a new code and try again."
+    }
+  },
+  "super": {
+    "brand": "Super admin",
+    "stats": {
+      "schools": "Schools",
+      "activeSchools": "{count, number} active",
+      "subscriptions": "Live subscriptions",
+      "subscriptionsNote": "Trial, active and grace period",
+      "students": "Students",
+      "studentsNote": "Active students in all schools"
     }
   }
 }
