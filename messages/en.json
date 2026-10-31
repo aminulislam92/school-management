@@ -851,5 +851,42 @@
       "taken": "These days are already holidays: {dates}",
       "notFound": "Not found."
     }
+  },
+  "admission": {
+    "errors": {
+      "nameBn": "Bangla name must be 2 to 100 characters.",
+      "nameBnScript": "Write the Bangla name in Bangla.",
+      "nameEn": "English name must be 2 to 100 characters.",
+      "nameEnScript": "Use only English letters in the English name.",
+      "dateOfBirth": "Enter a valid date of birth.",
+      "admissionDate": "Enter a valid admission date.",
+      "bornAfterAdmission": "The date of birth must be before the admission date.",
+      "gender": "Pick a gender.",
+      "religion": "Pick a religion.",
+      "bloodGroup": "Pick a blood group from the list.",
+      "birthRegNo": "The birth registration number must have 17 digits.",
+      "address": "Keep the address under 300 characters.",
+      "previousSchool": "The previous school's name is too long.",
+      "relation": "Pick the relation.",
+      "guardianName": "Enter the guardian's name.",
+      "phone": "Enter a valid mobile number, e.g. 01712345678.",
+      "nid": "A national ID has 10, 13 or 17 digits.",
+      "occupation": "Occupation is too long.",
+      "noGuardian": "Add at least one guardian.",
+      "tooManyGuardians": "At most 3 guardians.",
+      "onePrimary": "Pick one primary guardian (SMS goes to their number).",
+      "samePhone": "Two guardians have the same mobile number.",
+      "twoParents": "Only one father and one mother.",
+      "session": "Pick a session.",
+      "section": "Pick a section.",
+      "roll": "Roll must be between 1 and 999.",
+      "group": "Pick a group.",
+      "subject": "Subject is not valid.",
+      "fourthNotTaken": "The 4th subject must be one of the student's elective subjects."
+    },
+    "warnings": {
+      "ageForClass": "The student's age looks unusual for this class. Please check the date of birth.",
+      "birthRegYear": "The birth registration number's first four digits don't match the birth year. Please check."
+    }
   }
 }
