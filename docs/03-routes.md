@@ -297,5 +297,12 @@ Actions: `switchChild(studentId)` — বাকি সব শুধু পড়
 | report.finance | ✔ | | ✔ | | | | |
 | audit.read | ✔ | | | | | | |
 | portal.fees | | | | | | সেটিংস অনুযায়ী | ✔ |
+| super.manage | | | | | | | |
+| user.manage | ✔ | | | | | | |
+| certificate.print | ✔ | ✔ | | | | | |
+| attendance.report | ✔ | | | | ✔ | | |
+| exam.manage | ✔ | | | | | | |
+| expense.manage | ✔ | | ✔ | | | | |
+| portal.view | | | | | | ✔ | ✔ |
 
-SUPER_ADMIN স্কুলের ভেতরের ডেটায় সরাসরি হাত দেবে না; প্রয়োজনে "স্কুল হিসেবে দেখুন" (impersonate) পরে যোগ হবে, অডিট লগসহ।
+কোড: `src/server/auth/permissions.ts` (টেস্ট: `permissions.test.ts`)। `super.manage` শুধু SUPER_ADMIN-এর। SUPER_ADMIN স্কুলের ভেতরের ডেটায় সরাসরি হাত দেবে না; প্রয়োজনে "স্কুল হিসেবে দেখুন" (impersonate) পরে যোগ হবে, অডিট লগসহ।

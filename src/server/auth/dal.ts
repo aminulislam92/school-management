@@ -14,13 +14,12 @@ import {
   verifySession,
   type SessionPayload,
 } from "./session-token";
-
-const STAFF_ROLES: Role[] = ["ADMIN", "OFFICE_STAFF", "ACCOUNTANT", "TEACHER", "CLASS_TEACHER"];
+import { can, ForbiddenError, isStaff, type Permission } from "./permissions";
 
 /** Where a user lands after login. */
 export function homePathFor(roles: Role[]): string {
   if (roles.includes("SUPER_ADMIN")) return "/super";
-  if (roles.some((r) => STAFF_ROLES.includes(r))) return "/admin";
+  if (isStaff(roles)) return "/admin";
   return "/portal";
 }
 
@@ -101,4 +100,24 @@ export async function requireUser(allowedRoles?: Role[]): Promise<CurrentUser> {
   return user;
 }
 
-export { STAFF_ROLES };
+/**
+ * For PAGES: logged in and allowed to do `permission`, else redirect
+ * (to /login, or to the user's own home page).
+ *   const user = await requirePermission("fee.collect");
+ */
+export async function requirePermission(permission: Permission): Promise<CurrentUser> {
+  const user = await requireUser();
+  if (!can(user.roles, permission)) redirect(homePathFor(user.roles));
+  return user;
+}
+
+/**
+ * For SERVER ACTIONS: same check, but throws instead of redirecting, so a
+ * forged form post can never run the action.
+ *   const user = await assertPermission("payment.void");
+ */
+export async function assertPermission(permission: Permission): Promise<CurrentUser> {
+  const user = await getCurrentUser();
+  if (!user || !can(user.roles, permission)) throw new ForbiddenError(permission);
+  return user;
+}

@@ -31,6 +31,7 @@ The developer is learning Next.js: after each change, explain briefly in Bangla 
 - `sdb` does not check ids inside nested writes (`connect`, nested `create`): when an action receives foreign ids (sectionId, subjectId ...), load them through `sdb` first. No raw SQL with school data.
 - Run `npm run test:db` (needs local MySQL) after touching `school-db.ts` or `tenant-scope.ts`.
 - Auth: every protected page/action starts with `await requireUser([roles])` from `src/server/auth/dal.ts` (proxy.ts only checks that a cookie exists). The session cookie is bound to one host; `getSession()` also checks it belongs to the current school.
+- Permissions: one table in `src/server/auth/permissions.ts`. Pages use `await requirePermission("fee.collect")`, server actions use `await assertPermission("fee.collect")` (throws). Menus use `permissionsFor(user.roles)`. Row-level limits (a teacher's own sections, a guardian's own children) are extra checks next to the data. Changing the table means updating `permissions.test.ts` and docs/03-routes.md §8.
 - Check role/permission on the server in every action, not only in the UI.
 - Never trust `schoolId` from the client; take it from the session and the subdomain.
 - Money is `Decimal` (`@db.Decimal(10,2)`), never Float. Use string/Decimal math, not JS floats.
