@@ -11,15 +11,15 @@
 
 ## ফেজ ০ — প্রজেক্ট সেটআপ (সপ্তাহ ২-এর শুরু)
 
-- [ ] **T0.1** Next.js প্রজেক্ট তৈরি (TypeScript, Tailwind, App Router, `src/` ফোল্ডার, ESLint) — বর্তমান ফোল্ডারেই, `docs/` ও `prisma/` রেখে
-- [ ] **T0.2** Git init, `.gitignore`-এ `.env*`, প্রথম কমিট, GitHub প্রাইভেট রিপোতে পুশ
-- [ ] **T0.3** MySQL-এ `school_db` তৈরি (utf8mb4), `.env` ও `.env.example`, Prisma 6 ইনস্টল, `npx prisma migrate dev --name init`
-- [ ] **T0.4** `src/lib/db.ts` — Prisma client singleton
-- [ ] **T0.5** shadcn/ui ইনস্টল; বেস কম্পোনেন্ট: Button, Input, Select, Table, Dialog, Form, Toast, Card; বাংলা ফন্ট (Hind Siliguri/Noto Sans Bengali)
-- [ ] **T0.6** i18n সেটআপ: `bn.json`, `en.json`, ভাষা বদলের সুইচ, ডিফল্ট বাংলা
-- [ ] **T0.7** Vitest সেটআপ + একটা নমুনা টেস্ট; `npm test` স্ক্রিপ্ট
-- [ ] **T0.8** `CLAUDE.md` লেখা (স্ট্যাক, কমান্ড, নিয়ম, docs-এর লিংক)
-- [ ] **T0.9** Seed স্ক্রিপ্ট (`prisma/seed.ts`): ১টা প্ল্যান, ১টা SUPER_ADMIN, `demo` নামে ১টা স্কুল
+- [x] **T0.1** Next.js প্রজেক্ট তৈরি (TypeScript, Tailwind, App Router, `src/` ফোল্ডার, ESLint) — বর্তমান ফোল্ডারেই, `docs/` ও `prisma/` রেখে
+- [x] **T0.2** Git init, `.gitignore`-এ `.env*`, প্রথম কমিট, GitHub প্রাইভেট রিপোতে পুশ
+- [x] **T0.3** MySQL-এ `school_db` তৈরি (utf8mb4), `.env` ও `.env.example`, Prisma 6 ইনস্টল, `npx prisma migrate dev --name init`
+- [x] **T0.4** `src/lib/db.ts` — Prisma client singleton
+- [x] **T0.5** shadcn/ui ইনস্টল; বেস কম্পোনেন্ট: Button, Input, Select, Table, Dialog, Form, Toast, Card; বাংলা ফন্ট (Hind Siliguri/Noto Sans Bengali)
+- [x] **T0.6** i18n সেটআপ: `bn.json`, `en.json`, ভাষা বদলের সুইচ, ডিফল্ট বাংলা
+- [x] **T0.7** Vitest সেটআপ + একটা নমুনা টেস্ট; `npm test` স্ক্রিপ্ট
+- [x] **T0.8** `CLAUDE.md` লেখা (স্ট্যাক, কমান্ড, নিয়ম, docs-এর লিংক)
+- [x] **T0.9** Seed স্ক্রিপ্ট (`prisma/seed.ts`): ১টা প্ল্যান, ১টা SUPER_ADMIN, `demo` নামে ১টা স্কুল
 
 ## ফেজ ১ — ভিত্তি: SaaS, লগইন, একাডেমিক সেটআপ (সপ্তাহ ২–৩)
 
@@ -160,7 +160,7 @@
 
 | ফেজ | টাস্ক | শেষ |
 | --- | --- | --- |
-| ০ সেটআপ | 9 | 0 |
+| ০ সেটআপ | 9 | 9 |
 | ১ ভিত্তি | 21 | 0 |
 | ২ শিক্ষার্থী ও স্টাফ | 16 | 0 |
 | ৩ হাজিরা ও ফি | 17 | 0 |
@@ -168,4 +168,4 @@
 | ৫ SMS, পোর্টাল, ড্যাশবোর্ড | 19 | 0 |
 | ৬ SaaS | 5 | 0 |
 | ৭ টেস্ট ও ডিপ্লয় | 7 | 0 |
-| **মোট** | **108** | **0** |
+| **মোট** | **108** | **9** |
